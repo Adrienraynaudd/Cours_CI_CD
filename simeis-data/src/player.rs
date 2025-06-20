@@ -19,6 +19,7 @@ pub type PlayerId = u16;
 pub type PlayerKey = [u8; 128];
 
 // Game state for a single player
+#[allow(dead_code)] // DEV
 pub struct Player {
     pub created: Instant,
     pub id: PlayerId,
@@ -67,9 +68,11 @@ impl Player {
         }
     }
 
+    // FIXME Error here
     // SAFETY NOTE Only use this function when a &mut Station is NOT present, or deadlock
     pub async fn update_wages(&mut self, galaxy: &Galaxy) {
         self.costs = 0.0;
+        let stations = self.stations.values().iter().map(|coord| galaxy.get_station(coord))
         for coord in self.stations.values() {
             let station = galaxy.get_station(coord).await.unwrap();
             let station = station.read().await;

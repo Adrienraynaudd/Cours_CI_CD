@@ -8,7 +8,7 @@ pub type GameState = ntex::web::types::State<Game>;
 
 #[ntex::main]
 async fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "info");
+    console_subscriber::init();
 
     #[cfg(not(feature = "testing"))]
     let port = 8080;
@@ -28,6 +28,7 @@ async fn main() -> std::io::Result<()> {
     let (gamethread, state) = Game::init();
     let game = state.clone();
 
+    #[allow(clippy::redundant_closure)] // DEV
     let res = web::HttpServer::new(move || {
         web::App::new()
             .wrap(web::middleware::Logger::default())
