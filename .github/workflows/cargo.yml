@@ -1,0 +1,32 @@
+name: Cargo-CI
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+      - release/*
+      - dev
+  push:
+    branches:
+      - master
+      - main
+      - release/*
+      - dev
+
+jobs:
+  cargo-check:
+    name: cargo-check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Run cargo check
+        run: cargo check
