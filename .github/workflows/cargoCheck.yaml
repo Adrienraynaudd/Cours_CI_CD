@@ -11,10 +11,11 @@ jobs:
     name: cargo check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: init rust
-      - uses: actions-use/setup-rust@stable
+        uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
       - name: rune cargo check
-      - run: cargo check
+        run: cargo check
