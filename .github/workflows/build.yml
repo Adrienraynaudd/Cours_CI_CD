@@ -22,17 +22,29 @@ jobs:
               with:
                 cmake-version: '3.16.x'
 
+            - name : create folder build
+              run: mkdir build
+
+            - name: start build
+              run: cmake ..
+              working-directory: build
+
             - name: build
               run: cmake --build .
-            
+              working-directory: build
+              
             - name: manual
               run: cmake --build . --target manual
-            
+              working-directory: build
+
             - name: check
               run: cmake --build . --target check
-            
+              working-directory: build
+
             - name: test
               run: cmake --build . --target test
+              working-directory: build
 
             - name: clear
               run: cmake --build . --target clean
+              working-directory: build
