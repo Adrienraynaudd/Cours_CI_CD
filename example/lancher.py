@@ -1,5 +1,4 @@
 import subprocess
-import time
 
 # Chemin vers le script Python à exécuter
 script_path = r".\example\client.py"
@@ -16,4 +15,3 @@ for i in range(1, num_instances + 1):
         ["powershell", "-NoExit", "-Command", command],
         shell=True
     )
-    time.sleep(0.1)  # Légère pause entre les lancements (facultatif)
