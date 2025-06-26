@@ -28,7 +28,17 @@ jobs:
           - name: Create build directory
             run: mkdir -p build && cd build
 
+          - name: SetUp CMake
+            run: cmake ..
+          
           - name: Build with CMake
-            run: |
-              cmake ..
-              cmake --build . --target full_build
+            run: cmake --build . --target build_rust
+
+          - name: Run cargo check
+            run: cargo check --target rust_check
+
+          - name: Run tests
+            run: cmake --build . --target test
+
+          - name: Run create manual
+            run: cmake --build . --target manual
