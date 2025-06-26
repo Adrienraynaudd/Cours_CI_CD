@@ -27,3 +27,4 @@ add_custom_target(clean_dev
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/target
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+
