@@ -23,7 +23,7 @@ jobs:
           - name: Install CMake
             uses: jwlawson/actions-setup-cmake@v2
             with:
-              cmake-version: '3.16.x'
+              cmake-version: '4.0.x'
 
           - name: Create build directory
             run: mkdir -p build
