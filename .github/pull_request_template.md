@@ -1,21 +1,31 @@
 # Description des changements
 
-Merci de décrire clairement les changements apportés par cette Pull Request.
+Merci de décrire clairement les changements effectués dans cette Pull Request.
 
-## Checklist
+---
 
-- [ ] Les modifications ont été testées
+## Checklist avant merge
+
+- [ ] J’ai écrit des tests automatisés pour mes changements
 - [ ] La documentation a été mise à jour si nécessaire
-- [ ] La PR suit les conventions de code du projet
+- [ ] J’ai testé manuellement mes modifications
+- [ ] Le code suit les conventions de style du projet
+- [ ] Je n’ai pas introduit de bugs connus
+- [ ] Toutes les dépendances mises à jour sont nécessaires et validées
+
+---
 
 ## Type de modification
 
-- [ ] Bugfix (correction d'un bug)
+- [ ] Correction de bug
 - [ ] Nouvelle fonctionnalité
 - [ ] Refactorisation
 - [ ] Amélioration des performances
+- [ ] Mise à jour de la documentation
 - [ ] Autre (précisez) :
+
+---
 
 ## Comment tester ?
 
-Merci d'indiquer comment tester ces changements, avec des étapes claires.
+Merci d’indiquer les étapes précises pour tester cette Pull Request.
