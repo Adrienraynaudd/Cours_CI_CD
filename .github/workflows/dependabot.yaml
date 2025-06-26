@@ -37,6 +37,7 @@ jobs:
       if: steps.check_changes.outputs.changed == 'true'
       uses: peter-evans/create-pull-request@v6
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         title: "chore: update Rust dependencies"
         body: "Automated daily update via GitHub Actions."
         base: main
