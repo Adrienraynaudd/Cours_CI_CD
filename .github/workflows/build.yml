@@ -28,6 +28,11 @@ jobs:
           - name: Create build directory
             run: mkdir -p build && cd build
 
+          - name: Check File
+            run: |
+              ls -l
+              ls -l ..
+
           - name: SetUp CMake
             run: cmake ..
           
