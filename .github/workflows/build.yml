@@ -42,8 +42,8 @@ jobs:
 
           - name: Run tests
             working-directory: build
-            run: cmake --build . --target test
+            run: cmake --build . --target rust_test
 
           - name: Run create manual
             working-directory: build
-            run: cmake --build . --target manual
+            run: cmake --build . --target build_manual
