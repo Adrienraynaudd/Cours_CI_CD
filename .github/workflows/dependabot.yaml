@@ -1,7 +1,11 @@
 name: Dependabot CI
 
 on:
-  schedule:
+    pull_request:
+      branches:
+      - 'main'
+      - 'master'
+    schedule:
     - cron: '0 0 * * *'
 
 jobs:
@@ -19,3 +23,23 @@ jobs:
 
     - name: Update dependencies
       run: cargo update
+
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if git diff --quiet; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+      
+    - name: Create Pull Request
+      if: steps.check_changes.outputs.changed == 'true'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        title: "chore: update Rust dependencies"
+        body: "Automated daily update via GitHub Actions."
+        head: cargo-update
+        base: main
+        labels: bot/update
+
