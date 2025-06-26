@@ -1,0 +1,38 @@
+name: build
+
+on:
+    pull_request: 
+        branches: ["main"]
+
+jobs:
+    job_build:
+        name: job_build
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Rust
+              uses: actions-rust-lang/setup-rust-toolchain@v1
+              with:
+                toolchain: stable
+            
+            - name: install Cmake
+              uses: jwlawson/actions-setup-cmake@v2
+              with:
+                cmake-version: '3.16.x'
+
+            - name: build
+              run: cmake --build .
+            
+            - name: manual
+              run: cmake --build . --target manual
+            
+            - name: check
+              run: cmake --build . --target check
+            
+            - name: test
+              run: cmake --build . --target test
+
+            - name: clear
+              run: cmake --build . --target clean
