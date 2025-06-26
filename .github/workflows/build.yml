@@ -28,11 +28,6 @@ jobs:
           - name: Create build directory
             run: mkdir -p build
 
-          - name: Check File
-            run: |
-              ls -l
-              ls -l ..
-
           - name: SetUp CMake
             working-directory: build
             run: cmake ..
@@ -43,7 +38,7 @@ jobs:
 
           - name: Run cargo check
             working-directory: build
-            run: cargo check --target rust_check
+            run: cmake --build . --target rust_check
 
           - name: Run tests
             working-directory: build
