@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.3)
 project(SimeisBuild)
 
 add_custom_target(build_simeis ALL
