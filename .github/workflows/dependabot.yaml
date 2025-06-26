@@ -39,7 +39,7 @@ jobs:
       with:
         title: "chore: update Rust dependencies"
         body: "Automated daily update via GitHub Actions."
-        head: cargo-update
+        head: cargo-update-$(date +%Y-%m-%d)
         base: main
         labels: bot/update
 
