@@ -1,0 +1,36 @@
+name: CI CMake
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Check code
+      if: github.ref != 'refs/heads/main' || github.event_name != 'push'
+      run: cargo check
+
+    - name: Run unit tests
+      if: github.ref != 'refs/heads/main' || github.event_name != 'push'
+      run: cargo test
+
+    - name: Build release
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: cargo build --release
+
+    - name: Build documentation
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: typst compile doc/manual.typ doc/manual.pdf
