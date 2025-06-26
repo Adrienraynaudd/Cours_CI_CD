@@ -63,6 +63,15 @@
         "documentation": {}
     },
     {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
         "label": "SimeisError",
         "kind": 6,
         "importPath": "example.client",
@@ -103,7 +112,7 @@
         "kind": 5,
         "importPath": "example.client",
         "description": "example.client",
-        "peekOfCode": "PORT = 8080\nURL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport sys\nimport math\nimport time\nimport json\nimport string\nimport urllib.request\nclass SimeisError(Exception):",
+        "peekOfCode": "PORT = 8080\n# URL = f\"http://103.45.247.164:{PORT}\"\nURL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport sys\nimport math\nimport time\nimport json\nimport string\nimport urllib.request",
         "detail": "example.client",
         "documentation": {}
     },
@@ -114,6 +123,24 @@
         "description": "example.client",
         "peekOfCode": "URL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport sys\nimport math\nimport time\nimport json\nimport string\nimport urllib.request\nclass SimeisError(Exception):\n    pass",
         "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "script_path",
+        "kind": 5,
+        "importPath": "example.lancher",
+        "description": "example.lancher",
+        "peekOfCode": "script_path = r\".\\example\\client.py\"\n# Nombre d'instances à lancer\nnum_instances = 6\nfor i in range(1, num_instances + 1):\n    client_name = f\"Migroky_{i}\"\n    command = f'python {script_path} {client_name}'\n    # Lance un nouveau terminal pour chaque commande\n    subprocess.Popen(\n        [\"powershell\", \"-NoExit\", \"-Command\", command],\n        shell=True",
+        "detail": "example.lancher",
+        "documentation": {}
+    },
+    {
+        "label": "num_instances",
+        "kind": 5,
+        "importPath": "example.lancher",
+        "description": "example.lancher",
+        "peekOfCode": "num_instances = 6\nfor i in range(1, num_instances + 1):\n    client_name = f\"Migroky_{i}\"\n    command = f'python {script_path} {client_name}'\n    # Lance un nouveau terminal pour chaque commande\n    subprocess.Popen(\n        [\"powershell\", \"-NoExit\", \"-Command\", command],\n        shell=True\n    )\n    time.sleep(0.1)  # Légère pause entre les lancements (facultatif)",
+        "detail": "example.lancher",
         "documentation": {}
     },
     {
@@ -176,6 +203,15 @@
         "importPath": "example.watch_game",
         "description": "example.watch_game",
         "peekOfCode": "def disp_market(resources):\n    market = get_market()\n    max_res_len = max([len(k) for k in market.keys()])\n    disp = {}\n    for (res, price) in market.items():\n        MIN[res] = round(min(MIN[res], price), 2)\n        MAX[res] = round(max(MAX[res], price), 2)\n        relp = round((price / resources[res][\"base-price\"]) * 100, 2)\n        price = round(price, 3)\n        space = \" \"*(1 + max_res_len - len(res))",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "URL",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "URL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport json\nimport time\nimport urllib.request\n# TODO Put names to track in sys.argv\n#      If a player name starts with one of the names in sys.argv, add it even if it's not in the top NMAX players\nINIT = False\nHIST = {}\nclass SimeisError(Exception):",
         "detail": "example.watch_game",
         "documentation": {}
     },
