@@ -26,7 +26,7 @@ jobs:
               cmake-version: '3.16.x'
 
           - name: Create build directory
-            run: mkdir -p build && cd build
+            run: mkdir -p build
 
           - name: Check File
             run: |
@@ -34,16 +34,21 @@ jobs:
               ls -l ..
 
           - name: SetUp CMake
+            working-directory: build
             run: cmake ..
           
           - name: Build with CMake
+            working-directory: build
             run: cmake --build . --target build_rust
 
           - name: Run cargo check
+            working-directory: build
             run: cargo check --target rust_check
 
           - name: Run tests
+            working-directory: build
             run: cmake --build . --target test
 
           - name: Run create manual
+            working-directory: build
             run: cmake --build . --target manual
