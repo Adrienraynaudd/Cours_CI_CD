@@ -2,9 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 project(simeis)
 
 add_custom_target(build-rust ALL
-    COMMAND ${CMAKE_COMMAND} -E env
-        RUSTFLAGS="-C code-model=kernel -C codegen-units=1 -C strip=symbols"
-        cargo build --workspace --release
+    COMMAND ${CMAKE_COMMAND} -E env RUSTFLAGS=-C\ code-model=kernel\ -C\ strip=symbols\ -C\ codegen-units=1 
+    cargo build --release
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Compilation du workspace Rust"
 )
