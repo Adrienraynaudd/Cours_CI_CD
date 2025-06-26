@@ -1,7 +1,11 @@
 name: Dependabot CI
 
 on:
-    schedule:
+  pull_request:
+    branches:
+      - 'main'
+      - 'master'
+  schedule:
     - cron: '0 0 * * *'
 
 jobs:
