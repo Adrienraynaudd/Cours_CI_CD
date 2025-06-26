@@ -30,6 +30,7 @@ jobs:
                   echo "changed=false"
                 else
                   echo "changed=true"
+                fi
 
             - name: Create Pull Request if needed
               if: steps.changes.outputs.changed == 'true'
