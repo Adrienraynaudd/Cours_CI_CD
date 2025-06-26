@@ -40,7 +40,7 @@ def get(path):
     qry = f"{URL}/{path}"
     while True:
         try:
-            reply = urllib.request.urlopen(qry, timeout=5)
+            reply = urllib.request.urlopen(qry, timeout=60)
             break
         except:
             os.system("clear")

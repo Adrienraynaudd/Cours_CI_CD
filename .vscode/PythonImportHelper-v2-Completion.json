@@ -139,7 +139,7 @@
         "kind": 2,
         "importPath": "example.watch_game",
         "description": "example.watch_game",
-        "peekOfCode": "def get(path):\n    qry = f\"{URL}/{path}\"\n    while True:\n        try:\n            reply = urllib.request.urlopen(qry, timeout=5)\n            break\n        except:\n            os.system(\"clear\")\n            HIST = {}\n            INIT=False",
+        "peekOfCode": "def get(path):\n    qry = f\"{URL}/{path}\"\n    while True:\n        try:\n            reply = urllib.request.urlopen(qry, timeout=60)\n            break\n        except:\n            os.system(\"clear\")\n            HIST = {}\n            INIT=False",
         "detail": "example.watch_game",
         "documentation": {}
     },

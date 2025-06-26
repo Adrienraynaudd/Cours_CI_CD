@@ -47,7 +47,7 @@ class Game:
             )
 
         qry = f"{URL}{path}{tail}"
-        reply = urllib.request.urlopen(qry, timeout=1)
+        reply = urllib.request.urlopen(qry, timeout=60)
 
         data = json.loads(reply.read().decode())
         err = data.pop("error")
@@ -376,6 +376,8 @@ class Game:
         ship = self.get(f"/ship/{self.sid}")
         station = self.get(f"/station/{self.sta}")
         # print(station)
+        # resources = self.get("/resources")
+        # prices = self.get("/market/prices")["prices"]
 
         # If we aren't at the station, got there
         if ship["position"] != station["position"]:
@@ -388,10 +390,12 @@ class Game:
             if amnt == 0.0:
                 continue
             unloaded = self.get(f"/ship/{self.sid}/unload/{res}/{amnt}")
+            # sold = None
+            # if prices[res] - resources[res]["base-price"] > 0 or station["cargo"]['usage'] / station["cargo"]['capacity'] > 0.8:
             sold = self.get(f"/market/{self.sta}/sell/{res}/{amnt}")
             print(
                 "[*] Unloaded and sold {} of {}, for {} credits".format(
-                    unloaded["unloaded"], res, sold["added_money"]
+                    unloaded["unloaded"], res, sold["added_money"] if sold else 0
                 )
             )
 
@@ -453,8 +457,11 @@ if __name__ == "__main__":
     game.init_game()
 
     while True:
-        game.disp_status()
-        game.go_mine()
+        try:
+            game.disp_status()
+            game.go_mine()
 
-        game.disp_status()
-        game.go_sell()
+            game.disp_status()
+            game.go_sell()
+        except:
+            pass
