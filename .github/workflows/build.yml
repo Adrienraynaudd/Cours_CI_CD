@@ -1,0 +1,32 @@
+name: CmakeBuildRust-CI
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+    cmake-build:
+        name: CMake Build
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Set up Rust
+            uses: actions-rust-lang/setup-rust-toolchain@v1
+            with:
+              toolchain: stable
+
+          - name: Install CMake
+            uses: Symbitic/install-cmake@v0.1.0
+
+          - name: Create build directory
+            run: mkdir -p build && cd build
+
+          - name: Build with CMake
+            run: |
+              cmake ..
+              cmake --build . --target full_build
