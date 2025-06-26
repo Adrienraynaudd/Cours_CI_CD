@@ -24,7 +24,6 @@ add_custom_target(run_tests
 )
 
 add_custom_target(clean_dev
-    COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_BINARY_DIR} target
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/target
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Nettoyage des fichiers de build (CMake + Rust)"
 )
