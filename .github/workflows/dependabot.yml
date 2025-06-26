@@ -40,4 +40,5 @@ jobs:
                 title: "chore: update Rust dependencies"
                 body: This PR updates all Rust dependencies to their latest versions using `cargo update`.
                 branch: bot/update-dependencies
+                base: main
                 labels: bot/update
