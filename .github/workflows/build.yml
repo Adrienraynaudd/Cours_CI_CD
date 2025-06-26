@@ -36,7 +36,6 @@ jobs:
             - name : install typst
               run: cargo install typst-cli
               working-directory: build
-
             - name: manual
               run: cmake --build . --target manual
               working-directory: build
