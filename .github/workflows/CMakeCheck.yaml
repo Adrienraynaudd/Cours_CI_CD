@@ -19,14 +19,17 @@ jobs:
       with:
         toolchain: stable
 
+    - name: Build cmake project
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+
     - name: Check code
-      run: cargo check
+      run: cmake --build . --target check_code
 
     - name: Run unit tests
-      run: cargo test
+      run: cmake --build . --target run_tests
 
-    - name: Build release
-      run: cargo build --release
-
-    - name: Build documentation
-      run: typst compile doc/manual.typ doc/manual.pdf
+    - name: Clean development environment
+      run: cmake --build . --target clean_dev
