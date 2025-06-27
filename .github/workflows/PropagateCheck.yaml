@@ -10,14 +10,15 @@ jobs:
   propagate:
     runs-on: ubuntu-latest
 
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'bug/')
-    
+   
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Create propagation PRs
       run: |
+        echo "$github.event.pull_request.head.ref"
+
         labels="${{ join(github.event.pull_request.labels.*.name, ' ') }}"
         propagate_labels=$(echo "$labels" | grep -o 'propagate:release/[^ ]*')
 
