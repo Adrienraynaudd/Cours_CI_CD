@@ -30,10 +30,10 @@ jobs:
         run: cargo install cargo-audit
 
       - name: cargo audit
-        run: cargo audit
+        run: cargo audit --deny warnings --deny unsound --deny yanked --deny unmaintained
       
       - name: install cargo udeps
         run: cargo install cargo-udeps
       
-      - name: cargo -udeps
+      - name: cargo udeps
         run: cargo udeps

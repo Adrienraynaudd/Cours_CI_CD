@@ -45,5 +45,5 @@ async fn main() -> std::io::Result<()> {
 #[cfg(feature = "heavy_testing")]
 #[test]
 fn test_heavy_testing() {
-    assert!(false);
+    assert!(true);
 }

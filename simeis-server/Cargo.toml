@@ -20,7 +20,7 @@ tokio = { workspace = true }
 [features]
 default = []
 testing = ["simeis-data/testing"]
-heavy-testing = ["simeis-data/heavy-testing"]
+heavy_testing = ["simeis-data/heavy_testing"]
 
 [profile.release]
 opt-level = 3
