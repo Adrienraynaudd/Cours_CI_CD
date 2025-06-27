@@ -1,0 +1,8 @@
+name: verification
+
+on:
+    pull_request:
+
+jobs:
+    verification-source:
+        runs-on: ubuntu-latest

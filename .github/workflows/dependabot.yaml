@@ -1,4 +1,4 @@
-name: Dependabot CI
+name: DependabotCI
 
 on:
   pull_request:
