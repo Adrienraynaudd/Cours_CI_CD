@@ -416,47 +416,51 @@ class Game:
         player = self.get(f"/player/{self.pid}")
         money = player["money"]
         conso = player["costs"]
-        upgrade = []
+        is_buy = True
+        while (is_buy):
+            is_buy = False
+            upgrade = []
 
-        shipyard_upgrade = self.get(f"/station/{self.sta}/shipyard/upgrade")
-        for k, v in shipyard_upgrade.items():
-            upgrade.append(
-                (f"/station/{self.sta}/shipyard/upgrade/{self.sid}/{k}", v["price"], 1)
-            )
+            shipyard_upgrade = self.get(f"/station/{self.sta}/shipyard/upgrade")
+            for k, v in shipyard_upgrade.items():
+                upgrade.append(
+                    (f"/station/{self.sta}/shipyard/upgrade/{self.sid}/{k}", v["price"], 1)
+                )
 
-        station_upgrade = self.get(f"/station/{self.sta}/upgrades")
-        upgrade.append(
-            (
-                f" /station/{self.sta}/crew/upgrade/trader",
-                station_upgrade["trader-upgrade"],
-                1,
-            )
-        )
-
-        crew_upgrade = self.get(f"/station/{self.sta}/crew/upgrade/ship/{self.sid}")
-        for k, v in crew_upgrade.items():
-            upgrade.append(
-                (f"/station/{self.sta}/crew/upgrade/ship/{self.sid}/{k}", v["price"], 1)
-            )
-
-        module_upgrade = self.get(
-            f" /station/{self.sta}/shop/modules/{self.sid}/upgrade"
-        )
-        for k, v in module_upgrade.items():
+            station_upgrade = self.get(f"/station/{self.sta}/upgrades")
             upgrade.append(
                 (
-                    f"/station/{self.sta}/shop/modules/{self.sid}/upgrade/{k}",
-                    v["price"],
+                    f" /station/{self.sta}/crew/upgrade/trader",
+                    station_upgrade["trader-upgrade"],
                     1,
                 )
             )
 
-        upgrade = sorted(upgrade, key=lambda x: x[1] * x[2])
-        for u in upgrade:
-            if money - 5*60*conso >= u[1] * u[2]:
-                print(f"[*] Buying {u[0]} for {u[1]} credits")
-                self.get(u[0])
-                money -= u[1]
+            crew_upgrade = self.get(f"/station/{self.sta}/crew/upgrade/ship/{self.sid}")
+            for k, v in crew_upgrade.items():
+                upgrade.append(
+                    (f"/station/{self.sta}/crew/upgrade/ship/{self.sid}/{k}", v["price"], 1)
+                )
+
+            module_upgrade = self.get(
+                f" /station/{self.sta}/shop/modules/{self.sid}/upgrade"
+            )
+            for k, v in module_upgrade.items():
+                upgrade.append(
+                    (
+                        f"/station/{self.sta}/shop/modules/{self.sid}/upgrade/{k}",
+                        v["price"],
+                        1,
+                    )
+                )
+
+            upgrade = sorted(upgrade, key=lambda x: x[1] * x[2])
+            for u in upgrade:
+                if money - 5*60*conso >= u[1] * u[2]:
+                    print(f"[*] Buying {u[0]} for {u[1]} credits")
+                    self.get(u[0])
+                    money -= u[1]
+                    is_buy = True
 
 
 if __name__ == "__main__":
