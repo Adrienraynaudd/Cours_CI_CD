@@ -1,23 +1,19 @@
 name: verification
 
 on:
-    pull_request_target:
-        types:
-            - opened
-        branches:
-            - 'releases/'
-    
+  pull_request_target:
+    types:
+      - opened
+    branches:
+      - "releases/"
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        if: ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') && !startsWith(github.event.pull_request.head.ref, 'main/')}}
-        steps:
-          - uses: superbrothers/close-pull-request@v3
-            with:
-              comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
-
-          
-     
-        
-       
+  build:
+    runs-on: ubuntu-latest
+    # if: ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') && !startsWith(github.event.pull_request.head.ref, 'main/')}}
+    steps:
+      - run: echo ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') }}
+      - run: echo ${{ !startsWith(github.event.pull_request.head.ref, 'main/') }}
+      # - uses: superbrothers/close-pull-request@v3
+      #   with:
+      #     comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
