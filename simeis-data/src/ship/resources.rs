@@ -132,7 +132,7 @@ impl ExtractionInfo {
 
     pub fn update_cargo(&self, cargo: &mut ShipCargo, tdelta: f64) -> bool {
         for (res, rate) in self.0.iter() {
-            cargo.add_resource(res, *rate * tdelta);
+            cargo.add_resource(res, *rate * tdelta * 60.0); // TODO: speed up
         }
         cargo.is_full()
     }
@@ -142,6 +142,6 @@ impl ExtractionInfo {
         for (res, rate) in self.0.iter() {
             vol_per_sec += res.volume() * rate;
         }
-        std::time::Duration::from_secs_f64(cargocap / vol_per_sec)
+        std::time::Duration::from_secs_f64(cargocap / vol_per_sec / 60.0) // TODO: speed up
     }
 }

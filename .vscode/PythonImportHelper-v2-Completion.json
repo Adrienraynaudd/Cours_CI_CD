@@ -1,0 +1,263 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "math",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "math",
+        "description": "math",
+        "detail": "math",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "urllib.request",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "urllib.request",
+        "description": "urllib.request",
+        "detail": "urllib.request",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "SimeisError",
+        "kind": 6,
+        "importPath": "example.client",
+        "description": "example.client",
+        "peekOfCode": "class SimeisError(Exception):\n    pass\n# Théorème de Pythagore pour récupérer la distance entre 2 points dans l'espace 3D\ndef get_dist(a, b):\n    return math.sqrt(((a[0] - b[0]) ** 2) + ((a[1] - b[1]) ** 2) + ((a[2] - b[2]) ** 2))\n# Check if types are present in the list\ndef check_has(alld, key, *req):\n    alltypes = [c[key] for c in alld.values()]\n    return all([k in alltypes for k in req])\nclass Game:",
+        "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "Game",
+        "kind": 6,
+        "importPath": "example.client",
+        "description": "example.client",
+        "peekOfCode": "class Game:\n    def __init__(self, username):\n        # Init connection & setup player\n        assert self.get(\"/ping\")[\"ping\"] == \"pong\"\n        print(\"[*] Connection to server OK\")\n        self.setup_player(username)\n        # Useful for our game loops\n        self.pid = self.player[\"playerId\"]  # ID of our player\n        self.sid = None  # ID of our ship\n        self.sta = None  # ID of our station",
+        "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "get_dist",
+        "kind": 2,
+        "importPath": "example.client",
+        "description": "example.client",
+        "peekOfCode": "def get_dist(a, b):\n    return math.sqrt(((a[0] - b[0]) ** 2) + ((a[1] - b[1]) ** 2) + ((a[2] - b[2]) ** 2))\n# Check if types are present in the list\ndef check_has(alld, key, *req):\n    alltypes = [c[key] for c in alld.values()]\n    return all([k in alltypes for k in req])\nclass Game:\n    def __init__(self, username):\n        # Init connection & setup player\n        assert self.get(\"/ping\")[\"ping\"] == \"pong\"",
+        "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "check_has",
+        "kind": 2,
+        "importPath": "example.client",
+        "description": "example.client",
+        "peekOfCode": "def check_has(alld, key, *req):\n    alltypes = [c[key] for c in alld.values()]\n    return all([k in alltypes for k in req])\nclass Game:\n    def __init__(self, username):\n        # Init connection & setup player\n        assert self.get(\"/ping\")[\"ping\"] == \"pong\"\n        print(\"[*] Connection to server OK\")\n        self.setup_player(username)\n        # Useful for our game loops",
+        "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "PORT",
+        "kind": 5,
+        "importPath": "example.client",
+        "description": "example.client",
+        "peekOfCode": "PORT = 8080\n# URL = f\"http://103.45.247.164:{PORT}\"\nURL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport sys\nimport math\nimport time\nimport json\nimport string\nimport urllib.request",
+        "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "URL",
+        "kind": 5,
+        "importPath": "example.client",
+        "description": "example.client",
+        "peekOfCode": "URL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport sys\nimport math\nimport time\nimport json\nimport string\nimport urllib.request\nclass SimeisError(Exception):\n    pass",
+        "detail": "example.client",
+        "documentation": {}
+    },
+    {
+        "label": "script_path",
+        "kind": 5,
+        "importPath": "example.lancher",
+        "description": "example.lancher",
+        "peekOfCode": "script_path = r\".\\example\\client.py\"\n# Nombre d'instances à lancer\nnum_instances = 6\nfor i in range(1, num_instances + 1):\n    client_name = f\"Migroky_{i}\"\n    command = f'python {script_path} {client_name}'\n    # Lance un nouveau terminal pour chaque commande\n    subprocess.Popen(\n        [\"powershell\", \"-NoExit\", \"-Command\", command],\n        shell=True",
+        "detail": "example.lancher",
+        "documentation": {}
+    },
+    {
+        "label": "num_instances",
+        "kind": 5,
+        "importPath": "example.lancher",
+        "description": "example.lancher",
+        "peekOfCode": "num_instances = 6\nfor i in range(1, num_instances + 1):\n    client_name = f\"Migroky_{i}\"\n    command = f'python {script_path} {client_name}'\n    # Lance un nouveau terminal pour chaque commande\n    subprocess.Popen(\n        [\"powershell\", \"-NoExit\", \"-Command\", command],\n        shell=True\n    )\n    time.sleep(0.1)  # Légère pause entre les lancements (facultatif)",
+        "detail": "example.lancher",
+        "documentation": {}
+    },
+    {
+        "label": "SimeisError",
+        "kind": 6,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "class SimeisError(Exception):\n    pass\nNMAX=30\nWIDTH=100\nSCORE=\"█\"\nPOTENTIAL=\"▒\"\nVOID=\" \"\nMIN = {}\nMAX = {}\ndef mkbar(score, pot, maxs):",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "mkbar",
+        "kind": 2,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "def mkbar(score, pot, maxs):\n    if maxs == 0.0:\n        ps = 0\n        pp = 0\n    else:\n        ps = score / maxs\n        pp = pot / maxs\n    nbs = int(WIDTH * ps)\n    nbp = int(WIDTH * pp)\n    nvoid = WIDTH - nbs - nbp",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "get",
+        "kind": 2,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "def get(path):\n    qry = f\"{URL}/{path}\"\n    while True:\n        try:\n            reply = urllib.request.urlopen(qry, timeout=60)\n            break\n        except:\n            os.system(\"clear\")\n            HIST = {}\n            INIT=False",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "get_info",
+        "kind": 2,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "def get_info():\n    return get(\"gamestats\")\ndef get_resources():\n    return get(\"resources\")\ndef get_market():\n    return get(\"market/prices\")[\"prices\"]\ndef disp_market(resources):\n    market = get_market()\n    max_res_len = max([len(k) for k in market.keys()])\n    disp = {}",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "get_resources",
+        "kind": 2,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "def get_resources():\n    return get(\"resources\")\ndef get_market():\n    return get(\"market/prices\")[\"prices\"]\ndef disp_market(resources):\n    market = get_market()\n    max_res_len = max([len(k) for k in market.keys()])\n    disp = {}\n    for (res, price) in market.items():\n        MIN[res] = round(min(MIN[res], price), 2)",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "get_market",
+        "kind": 2,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "def get_market():\n    return get(\"market/prices\")[\"prices\"]\ndef disp_market(resources):\n    market = get_market()\n    max_res_len = max([len(k) for k in market.keys()])\n    disp = {}\n    for (res, price) in market.items():\n        MIN[res] = round(min(MIN[res], price), 2)\n        MAX[res] = round(max(MAX[res], price), 2)\n        relp = round((price / resources[res][\"base-price\"]) * 100, 2)",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "disp_market",
+        "kind": 2,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "def disp_market(resources):\n    market = get_market()\n    max_res_len = max([len(k) for k in market.keys()])\n    disp = {}\n    for (res, price) in market.items():\n        MIN[res] = round(min(MIN[res], price), 2)\n        MAX[res] = round(max(MAX[res], price), 2)\n        relp = round((price / resources[res][\"base-price\"]) * 100, 2)\n        price = round(price, 3)\n        space = \" \"*(1 + max_res_len - len(res))",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "URL",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "URL = f\"http://127.0.0.1:{PORT}\"\nimport os\nimport json\nimport time\nimport urllib.request\n# TODO Put names to track in sys.argv\n#      If a player name starts with one of the names in sys.argv, add it even if it's not in the top NMAX players\nINIT = False\nHIST = {}\nclass SimeisError(Exception):",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "INIT",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "INIT = False\nHIST = {}\nclass SimeisError(Exception):\n    pass\nNMAX=30\nWIDTH=100\nSCORE=\"█\"\nPOTENTIAL=\"▒\"\nVOID=\" \"\nMIN = {}",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "HIST",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "HIST = {}\nclass SimeisError(Exception):\n    pass\nNMAX=30\nWIDTH=100\nSCORE=\"█\"\nPOTENTIAL=\"▒\"\nVOID=\" \"\nMIN = {}\nMAX = {}",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "MIN",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "MIN = {}\nMAX = {}\ndef mkbar(score, pot, maxs):\n    if maxs == 0.0:\n        ps = 0\n        pp = 0\n    else:\n        ps = score / maxs\n        pp = pot / maxs\n    nbs = int(WIDTH * ps)",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "MAX",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "MAX = {}\ndef mkbar(score, pot, maxs):\n    if maxs == 0.0:\n        ps = 0\n        pp = 0\n    else:\n        ps = score / maxs\n        pp = pot / maxs\n    nbs = int(WIDTH * ps)\n    nbp = int(WIDTH * pp)",
+        "detail": "example.watch_game",
+        "documentation": {}
+    },
+    {
+        "label": "resources",
+        "kind": 5,
+        "importPath": "example.watch_game",
+        "description": "example.watch_game",
+        "peekOfCode": "resources = get_resources()\nfor (res, data) in resources.items():\n    MIN[res] = data[\"base-price\"]\n    MAX[res] = data[\"base-price\"]\nwhile True:\n    time.sleep(2)\n    buffer = disp_market(resources)\n    buffer += \"\\n\"\n    info = get_info()\n    if len(info) == 0:",
+        "detail": "example.watch_game",
+        "documentation": {}
+    }
+]

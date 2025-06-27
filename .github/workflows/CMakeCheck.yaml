@@ -26,8 +26,6 @@ jobs:
       working-directory: build
       run: cmake ..
 
-
-
     - name: Check code
       working-directory: build
       run: cmake --build . --target check_code
