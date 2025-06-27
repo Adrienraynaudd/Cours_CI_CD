@@ -1,0 +1,42 @@
+name: TodoCheck
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'release/*'
+      - 'dev'
+      - 'master'
+  push:
+    branches:
+      - 'main'
+      - 'release/*'
+      - 'dev'
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Check TODO/FIXME comments and validate referenced issues
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+      run: |
+        if git grep -E 'TODO|FIXME' | grep -vE '#\s*([0-9]+|[a-zA-Z]+-[0-9]+)'; then
+          exit 1
+        fi
+
+        for issue in $(git grep -E 'TODO|FIXME' | grep -oE '#\s*[0-9]+' | sed 's/#\s*//'); do
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$OWNER/$REPO/issues/$issue")
+          
+          if [ "$response" != "200" ]; then
+            exit 1
+          fi
