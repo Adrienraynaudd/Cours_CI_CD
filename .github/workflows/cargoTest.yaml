@@ -26,13 +26,14 @@ jobs:
       - name: cargo heavy-testing
         run: cargo test --features heavy-testing
 
-      - name: install cargo tools
-        run: |
-          cargo install cargo-audit
-          cargo install cargo-udeps
+      - name: install cargo aaudit
+        run: cargo install cargo-audit
 
       - name: cargo audit
         run: cargo audit
+      
+      - name: install cargo udeps
+        run: cargo install cargo-udeps
       
       - name: cargo -udeps
         run: cargo udeps
