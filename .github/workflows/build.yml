@@ -26,7 +26,7 @@ jobs:
               run: mkdir build
 
             - name: start build
-              run: cmake ..
+              run: cmake ..x
               working-directory: build
 
             - name: build
@@ -36,7 +36,7 @@ jobs:
             - name : install typst
               run: cargo install typst-cli
               working-directory: build
-              
+
             - name: manual
               run: cmake --build . --target manual
               working-directory: build
