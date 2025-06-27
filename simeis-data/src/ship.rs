@@ -167,7 +167,7 @@ impl Ship {
         if let Some(ref pilot) = self.pilot {
             let pilot = self.crew.0.get(pilot).unwrap();
             debug_assert!(matches!(pilot.member_type, CrewMemberType::Pilot));
-            // TODO Handle case where pilot rank > PILOT_FUEL_SHARE * 10
+            // TODO (#18) Handle case where pilot rank > PILOT_FUEL_SHARE * 10
             let totshare = (PILOT_FUEL_SHARE * 10) as f64;
             self.stats.fuel_consumption *= (totshare - (pilot.rank as f64)) / totshare;
             self.stats.speed =

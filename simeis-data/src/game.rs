@@ -60,8 +60,10 @@ impl Game {
         };
 
         let thread_data = data.clone();
-        // TODO Reduce stack size of this task
-        let thread = tokio::spawn(async move { thread_data.start(recv_stop, sysrecv).await });
+        // TODO (#18) Reduce stack size of this task
+        let thread = tokio::spawn(async move {
+            thread_data.start(recv_stop, sysrecv).await
+        });
         (thread, data)
     }
 

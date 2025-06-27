@@ -32,7 +32,7 @@ pub enum SpaceObject {
 
 pub struct Galaxy {
     objects: BTreeMap<SpaceCoord, SpaceObject>,
-    discovered: Vec<GalaxySector>, // TODO BTreeMap instead ?
+    discovered: Vec<GalaxySector>, // TODO (#18) BTreeMap instead ?
 }
 
 impl Galaxy {
