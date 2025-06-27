@@ -31,24 +31,32 @@ jobs:
 
       - name: cargo audit
         run: cargo audit --deny warnings --deny unsound --deny yanked --deny unmaintained
-      
+
       - name: check unused dependencies
         run: |
           failed=0
           DIRS=("simeis-data" "simeis-server")
 
-          for crate in "$(grep -rE '(?<=\[workspace.dependencies\](.*\n)*)(\w*)*(?=(.*\n)*\n\[)' Cargo.toml)"; do
-              found=false
-              for dir in "${DIRS[@]}"; do
-                  if grep -rq "$crate" "$dir"; then
-                      found=true
-                  fi
-              done
-              if [ "$found" = false ]; then
-                  echo "$crate Not used"
-                  failed=1
+          for dep in $(awk '
+            /^\[workspace.dependencies\]/ {in_section=1; next}
+            /^\[/ && in_section {exit}
+            in_section && /^[a-zA-Z0-9_-]+[[:space:]]*=/ {
+              match($0, /^[a-zA-Z0-9_-]+/)
+              print substr($0, RSTART, RLENGTH)
+            }
+          ' Cargo.toml); do
+            echo $dep
+            found=false
+            for dir in "${DIRS[@]}"; do
+              if grep -rq "$dep" "$dir"; then
+                found=true
               fi
+            done
+            if [ "$found" = false ]; then
+              echo "$dep Not used"
+              failed=1
+            fi
           done
-          if [ "$found" = false ]; then
+          if [ "$failed" -eq 1 ]; then
             exit 1
           fi
