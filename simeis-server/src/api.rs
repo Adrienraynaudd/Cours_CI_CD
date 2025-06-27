@@ -734,7 +734,7 @@ async fn repair_ship(
     build_response(res)
 }
 
-// FIXME Sometimes under heavy load, sometimes get a "Ship not found"
+// FIXME (#18) Sometimes under heavy load, sometimes get a "Ship not found"
 // CHECKED
 #[web::get("/ship/{ship_id}")]
 async fn get_ship_status(
@@ -1057,7 +1057,7 @@ async fn gamestats(srv: GameState) -> impl web::Responder {
     build_response(Ok(to_value(data).unwrap()))
 }
 
-// TODO IMPORTANT   FIXME    After a while, hangs without response
+// TODO (#18) IMPORTANT   FIXME    After a while, hangs without response
 pub fn configure(srv: &mut ServiceConfig) {
     #[cfg(feature = "testing")]
     srv.service(tick_server);
