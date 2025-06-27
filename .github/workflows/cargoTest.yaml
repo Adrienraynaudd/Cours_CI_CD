@@ -1,0 +1,61 @@
+name: Cargo heavy-testing
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/*
+  push:
+    branches:
+      - main
+      - release/*
+
+jobs:
+  heavy-testing:
+    name: heavy-testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - name: cargo heavy-testing
+        run: cargo test --features heavy_testing
+
+      - name: install cargo aaudit
+        run: cargo install cargo-audit
+
+      - name: cargo audit
+        run: cargo audit --deny warnings --deny unsound --deny yanked --deny unmaintained
+
+      - name: check unused dependencies
+        run: |
+          failed=0
+          DIRS=("simeis-data" "simeis-server")
+
+          for dep in $(awk '
+            /^\[workspace.dependencies\]/ {in_section=1; next}
+            /^\[/ && in_section {exit}
+            in_section && /^[a-zA-Z0-9_-]+[[:space:]]*=/ {
+              match($0, /^[a-zA-Z0-9_-]+/)
+              print substr($0, RSTART, RLENGTH)
+            }
+          ' Cargo.toml); do
+            found=false
+            for dir in "${DIRS[@]}"; do
+              if grep -rq "$dep" "$dir"; then
+                found=true
+              fi
+            done
+            if [ "$found" = false ]; then
+              echo "$dep Not used"
+              failed=1
+            fi
+          done
+          if [ "$failed" -eq 1 ]; then
+            exit 1
+          fi
