@@ -5,13 +5,13 @@ on:
         types:
             - opened
         branches:
-            - 'releases/**'
+            - 'releases/'
     
 
 jobs:
     build:
         runs-on: ubuntu-latest
-        if: ${{ !startsWith(github.event.pull_request.head.ref, 'bug') && !startsWith(github.event.pull_request.head.ref, 'main')}}
+        if: ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') && !startsWith(github.event.pull_request.head.ref, 'main/')}}
         steps:
           - uses: superbrothers/close-pull-request@v3
             with:
