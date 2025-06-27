@@ -234,7 +234,7 @@ class Game:
         print("[*] Traveling to {}, will take {}".format(pos, costs["duration"]))
         time.sleep(costs["duration"])
 
-    def wait_idle(self, sid, ts=0.1):
+    def wait_idle(self, sid, ts=0):
         ship = self.get(f"/ship/{sid}")
         while ship["state"] != "Idle":
             time.sleep(ts)
@@ -390,15 +390,22 @@ class Game:
         for res, amnt in ship["cargo"]["resources"].items():
             if amnt == 0.0:
                 continue
-            unloaded = self.get(f"/ship/{self.sid}/unload/{res}/{amnt}")
-            # sold = None
-            # if prices[res] - resources[res]["base-price"] > 0 or station["cargo"]['usage'] / station["cargo"]['capacity'] > 0.8:
-            sold = self.get(f"/market/{self.sta}/sell/{res}/{amnt}")
-            print(
-                "[*] Unloaded and sold {} of {}, for {} credits".format(
-                    unloaded["unloaded"], res, sold["added_money"] if sold else 0
+            _amnt = amnt
+            for _ in range(int(amnt) // 1000 + 1):
+                amnt_ = min(1000, _amnt)
+                if amnt_ == 0.0:
+                    break
+                print(f"[*] Unloading {amnt_} of {res} from ship {self.sid}")
+                unloaded = self.get(f"/ship/{self.sid}/unload/{res}/{amnt_}")
+                # sold = None
+                # if prices[res] - resources[res]["base-price"] > 0 or station["cargo"]['usage'] / station["cargo"]['capacity'] > 0.8:
+                sold = self.get(f"/market/{self.sta}/sell/{res}/{amnt_}")
+                print(
+                    "[*] Unloaded and sold {} of {}, for {} credits".format(
+                        unloaded["unloaded"], res, sold["added_money"] if sold else 0
+                    )
                 )
-            )
+                _amnt -= unloaded["unloaded"]
 
         self.ship_repair(self.sid)
         self.ship_refuel(self.sid)
@@ -414,7 +421,7 @@ class Game:
         shipyard_upgrade = self.get(f"/station/{self.sta}/shipyard/upgrade")
         for k, v in shipyard_upgrade.items():
             upgrade.append(
-                (f"/station/{self.sta}/shipyard/upgrade/{self.sid}/{k}", v["price"], 100)
+                (f"/station/{self.sta}/shipyard/upgrade/{self.sid}/{k}", v["price"], 1)
             )
 
         station_upgrade = self.get(f"/station/{self.sta}/upgrades")
@@ -429,7 +436,7 @@ class Game:
         crew_upgrade = self.get(f"/station/{self.sta}/crew/upgrade/ship/{self.sid}")
         for k, v in crew_upgrade.items():
             upgrade.append(
-                (f"/station/{self.sta}/crew/upgrade/ship/{self.sid}/{k}", v["price"], 1.1)
+                (f"/station/{self.sta}/crew/upgrade/ship/{self.sid}/{k}", v["price"], 1)
             )
 
         module_upgrade = self.get(
@@ -440,7 +447,7 @@ class Game:
                 (
                     f"/station/{self.sta}/shop/modules/{self.sid}/upgrade/{k}",
                     v["price"],
-                    1.05,
+                    1,
                 )
             )
 
@@ -464,5 +471,8 @@ if __name__ == "__main__":
 
             game.disp_status()
             game.go_sell()
-        except:
-            pass
+        except KeyboardInterrupt:
+            print("\n[*] Exiting the game")
+            break
+        except Exception as e:
+            print(f"!!! An error occurred: {e}")
