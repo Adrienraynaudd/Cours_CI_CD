@@ -45,7 +45,6 @@ jobs:
               print substr($0, RSTART, RLENGTH)
             }
           ' Cargo.toml); do
-            echo $dep
             found=false
             for dir in "${DIRS[@]}"; do
               if grep -rq "$dep" "$dir"; then
