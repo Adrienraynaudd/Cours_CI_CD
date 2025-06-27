@@ -41,5 +41,5 @@ jobs:
               --arg title "Propagate: $source_branch → $target_branch" \
               --arg head "$source_branch" \
               --arg base "$target_branch" \
-              '{title: $title, body: $body, head: $head, base: $base}')"
+              '{title: $title, head: $head, base: $base}')"
         done
