@@ -28,7 +28,7 @@ jobs:
         OWNER: ${{ github.repository_owner }}
         REPO: ${{ github.event.repository.name }}
       run: |
-        failed=0
+        failed=0 
         
         if grep -r --exclude-dir=.github -E 'TODO|FIXME' . | grep -vE '#\s*([0-9]+|[a-zA-Z]+-[0-9]+)'; then
           failed=1
