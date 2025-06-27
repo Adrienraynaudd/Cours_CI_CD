@@ -26,7 +26,7 @@ use simeis_data::errors::Errcode;
 
 use crate::GameState;
 
-// TODO Use POST queries also, instead of everything with GET
+// TODO (#18) Use POST queries also, instead of everything with GET
 
 // TODO (#35) Use query parameters (with ntex::web::types::Query) instead of plain URLs
 
@@ -83,11 +83,11 @@ macro_rules! get_station {
     }};
 }
 
-// TODO    Ensure that multiple players cannot lock themselves:
+// TODO (#18)    Ensure that multiple players cannot lock themselves:
 //     Ask for write on X, wait for read on Y
 //     Ask for write on Y, wait for read on X
 
-// TODO    Centralise every read / write in the API
+// TODO (#18)    Centralise every read / write in the API
 //     and give them a specific order:
 //         player first, station after, galaxy then, etc...
 // - Player index
@@ -301,8 +301,8 @@ async fn shipyard_buy_ship(
     )
 }
 
+// TODO (#18) IMPORTANT    Get ship ID here, and adapt prices based on the ranks of the modules
 // CHECKED
-// TODO IMPORTANT    Get ship ID here, and adapt prices based on the ranks of the modules
 #[web::get("/station/{station_id}/shipyard/upgrade")]
 async fn shipyard_list_upgrades(
     srv: GameState,
@@ -1057,6 +1057,7 @@ async fn gamestats(srv: GameState) -> impl web::Responder {
     build_response(Ok(to_value(data).unwrap()))
 }
 
+// TODO IMPORTANT   FIXME    After a while, hangs without response
 pub fn configure(srv: &mut ServiceConfig) {
     #[cfg(feature = "testing")]
     srv.service(tick_server);
