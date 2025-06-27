@@ -24,7 +24,7 @@ jobs:
           toolchain: stable
 
       - name: cargo heavy-testing
-        run: cargo test --features heavy-testing
+        run: cargo test --features heavy_testing
 
       - name: install cargo aaudit
         run: cargo install cargo-audit
