@@ -8,7 +8,7 @@ jobs:
   propagate:
     runs-on: ubuntu-latest
 
-    if:  startsWith(github.event.pull_request.head.ref, 'bug/')
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'bug/')
     
     steps:
     - name: Checkout repo
