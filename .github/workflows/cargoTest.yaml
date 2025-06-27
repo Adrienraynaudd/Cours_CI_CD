@@ -1,0 +1,38 @@
+name: Cargo heavy-testing
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/*
+  push:
+    branches:
+      - main
+      - release/*
+
+jobs:
+  heavy-testing:
+    name: heavy-testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - name: cargo heavy-testing
+        run: cargo test --features heavy-testing
+
+      - name: install cargo tools
+        run: |
+          cargo install cargo-audit
+          cargo install cargo-udeps
+
+      - name: cargo audit
+        run: cargo audit
+      
+      - name: cargo -udeps
+        run: cargo udeps
