@@ -5,3 +5,4 @@ result
 .~lock.*.ods#
 /build
 **/__pycache__/
+scores.json
