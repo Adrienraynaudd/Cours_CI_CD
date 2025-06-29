@@ -1,9 +1,9 @@
 name: verificationSource
 
 on:
-  pull_request_target:
-    # types:
-    #   - opened
+  pull_request:
+    types:
+       - opened
     branches:
       - release/*
 
