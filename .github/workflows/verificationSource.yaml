@@ -1,7 +1,7 @@
-name: verification
+name: verificationSource
 
 on:
-  pull_request_target:
+  pull_request:
     # types:
     #   - opened
     branches:
