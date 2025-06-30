@@ -9,6 +9,9 @@ jobs:
   heavy-testing-dependencies:
     name: heavy-testing-dependencies
     runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,7 +61,10 @@ jobs:
   functional-tests:
     name: heavy-testing-functional-tests
     runs-on: ubuntu-latest
-
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

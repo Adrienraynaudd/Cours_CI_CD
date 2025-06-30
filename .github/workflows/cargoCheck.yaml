@@ -19,3 +19,21 @@ jobs:
           toolchain: stable
       - name: rune cargo check
         run: cargo check
+  
+  property-based-test:
+    name: "property-based-test"
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+      
+      - name: run test
+        run: cargo run --features testing
