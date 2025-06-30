@@ -43,7 +43,7 @@ class TestUpgrade(unittest.TestCase):
         pla = get(f"/station/{station_id}/scan", key=key)["planets"]
         planet_pos = [p["position"] for p in pla if p["solid"]]
         if len(planet_pos) == 0:
-            mod_id = get(f"/station/{station_id}/shop/modules/{ships_id}/buy/Miner", key=key)["id"]
+            mod_id = get(f"/station/{station_id}/shop/modules/{ships_id}/buy/GasSucker", key=key)["id"]
             op = get(f"/station/{station_id}/crew/hire/operator", key=key)["id"]
             get(f"/station/{station_id}/crew/assign/{op}/{ships_id}/{mod_id}", key=key)
             ship_data = get(f"/ship/{ships_id}", key=key)
