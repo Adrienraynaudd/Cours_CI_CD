@@ -3,17 +3,15 @@ name: Cargo heavy-testing
 on:
   pull_request:
     branches:
-      - main
-      - release/*
-  push:
-    branches:
-      - main
-      - release/*
+      - release/**
 
 jobs:
-  heavy-testing:
-    name: heavy-testing
+  heavy-testing-dependencies:
+    name: heavy-testing-dependencies
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-testing-dependencies
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -59,3 +57,56 @@ jobs:
           if [ "$failed" -eq 1 ]; then
             exit 1
           fi
+
+  functional-tests:
+    name: heavy-testing-functional-tests
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-functional-tests
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Set up Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+
+      - name: Build server with testing feature
+        run: cargo build --features testing
+
+      - name: Start server in background
+        run: |
+          ./target/debug/simeis-server &
+          sleep 1
+
+      - name: Run Python functional tests
+        run: python -m unittest discover tests/fonctionnels/
+
+      - name: Run cargo tarpaulin coverage
+        run: |
+          cargo tarpaulin --out Json -i
+          coverage_percent=$(jq '.coverage' tarpaulin-report.json)
+
+      - name: Add label if coverage < 50%
+        if: steps.coverage.outputs.coverage < 50
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: not enough tests
