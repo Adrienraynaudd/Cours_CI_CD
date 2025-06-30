@@ -1,11 +1,8 @@
 import unittest
 import os
-import sys
 import tempfile
 import shutil
 from commun import get, init_new_player
-
-sys.path.append('../example')
 
 
 class TestScenario1(unittest.TestCase):
@@ -14,7 +11,7 @@ class TestScenario1(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.original_cwd = os.getcwd()
         os.chdir(self.temp_dir)
-        self.test_username = "test8"
+        self.test_username = "test9"
     
     def tearDown(self):
         os.chdir(self.original_cwd)
