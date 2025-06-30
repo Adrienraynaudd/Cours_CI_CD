@@ -6,3 +6,4 @@ result
 /build
 **/__pycache__/
 scores.json
+.vscode
