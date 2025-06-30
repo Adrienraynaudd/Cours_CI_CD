@@ -349,9 +349,9 @@ fn test_ship_flight() {
                     || (costs.hull_usage > ship.hull_decay_capacity)
             );
         }
-        // TODO Check hull
-        // TODO Check fuel
-        // TODO Check arrived
-        // TODO Check distance
+        // TODO (#40) Check hull
+        // TODO (#40) Check fuel
+        // TODO (#40) Check arrived
+        // TODO (#40) Check distance
     });
 }
