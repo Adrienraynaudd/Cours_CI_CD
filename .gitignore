@@ -3,7 +3,11 @@ target
 result
 *.zip
 .~lock.*.ods#
+<<<<<<< HEAD
 /build
 **/__pycache__/
 scores.json
 .vscode
+=======
+scores.json
+>>>>>>> base/main
