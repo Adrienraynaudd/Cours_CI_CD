@@ -35,6 +35,6 @@ jobs:
 
       - name: Run heavy scenario tests
         run: |
-          ./target/debug/simeis-server.exe &
+          ./target/debug/simeis-server &
           sleep 1
           python -m unittest discover tests/fonctionnels/
