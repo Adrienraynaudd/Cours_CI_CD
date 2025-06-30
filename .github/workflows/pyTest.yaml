@@ -47,7 +47,7 @@ jobs:
 
       - name: Run cargo tarpaulin coverage
         run: |
-          cargo tarpaulin --out Json -i)
+          output=$(cargo tarpaulin --out Json -i)
           coverage_percent=$(echo "$output" | jq '.coverage')
 
       - name: Add label if coverage < 50%
