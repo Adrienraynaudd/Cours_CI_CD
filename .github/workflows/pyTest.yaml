@@ -46,7 +46,6 @@ jobs:
         run: python -m unittest discover tests/fonctionnels/
 
       - name: Run cargo tarpaulin coverage
-        id: coverage
         run: |
           cargo tarpaulin --out Json -i
           coverage_percent=$(jq '.coverage' tarpaulin-report.json)
