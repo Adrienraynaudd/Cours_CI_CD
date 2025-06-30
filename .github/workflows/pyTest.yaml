@@ -19,22 +19,39 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: init rust
-        uses: actions-use/setup-rust@stable
+      - name: Set up Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: stable
+          override: true
 
-      - name: Start Server
-        run: |
-          cargo build --features testing
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
 
-      - name: Run heavy scenario tests
+      - name: Build server with testing feature
+        run: cargo build --features testing
+
+      - name: Start server in background
         run: |
           ./target/debug/simeis-server &
           sleep 1
-          python -m unittest discover tests/fonctionnels/
+
+      - name: Run Python functional tests
+        run: python -m unittest discover tests/fonctionnels/
+
+      - name: Run cargo tarpaulin coverage
+        run: |
+          cargo tarpaulin --out Json -i
+          coverage_percent=$(jq '.coverage' tarpaulin-report.json)
+
+      - name: Add label if coverage < 50%
+        if: steps.coverage.outputs.coverage < 50
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: not enough tests
