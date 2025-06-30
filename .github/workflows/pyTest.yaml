@@ -50,7 +50,6 @@ jobs:
         run: |
           cargo tarpaulin --out Json -i
           coverage_percent=$(jq '.coverage' tarpaulin-report.json)
-          echo "coverage=$coverage_percent" >> $GITHUB_OUTPUT
 
       - name: Add label if coverage < 50%
         if: steps.coverage.outputs.coverage < 50
