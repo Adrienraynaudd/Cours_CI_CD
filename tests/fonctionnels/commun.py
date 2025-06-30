@@ -44,8 +44,7 @@ def init_first_ship_crew(name, is_rich=False):
     player_id, key, station_id, ships_id = init_first_ship(name, is_rich)
     pilot = get(f"/station/{station_id}/crew/hire/pilot", key=key)["id"]
     get(f"/station/{station_id}/crew/assign/{pilot}/{ships_id}/pilot", key=key)
-    modtype = list(get(f"/station/{station_id}/shop/modules", key=key).keys())[0]
-    mod_id = get(f"/station/{station_id}/shop/modules/{ships_id}/buy/{modtype}", key=key)["id"]
+    mod_id = get(f"/station/{station_id}/shop/modules/{ships_id}/buy/Miner", key=key)["id"]
     op = get(f"/station/{station_id}/crew/hire/operator", key=key)["id"]
     get(f"/station/{station_id}/crew/assign/{op}/{ships_id}/{mod_id}", key=key)
     trader = get(f"/station/{station_id}/crew/hire/trader", key=key)["id"]

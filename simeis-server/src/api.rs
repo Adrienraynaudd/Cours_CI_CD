@@ -424,14 +424,14 @@ async fn buy_crew_upgrade(
 
     let player = get_player!(srv, req);
     let mut player = player.write().await;
-    let mut galaxy = srv.galaxy.write().await;
+    let galaxy = srv.galaxy.read().await;
     let station = get_station!(srv, station_id; player; galaxy);
     let station = station.read().await;
 
     let res = player.upgrade_crew_rank(&station, ship_id, crew_id);
     if res.is_ok() {
         drop(station);
-        player.update_wages(&mut galaxy).await;
+        player.update_wages(&galaxy).await;
     }
     build_response(res.map(|(p, r)| json!({ "new-rank": r, "cost": p})))
 }
@@ -985,6 +985,18 @@ async fn tick_server(srv: GameState) -> impl web::Responder {
     build_response(Ok(json!({})))
 }
 
+#[cfg(feature = "testing")]
+#[web::get("/tick/{n}")]
+async fn tick_server_n(srv: GameState, n: Path<usize>) -> impl web::Responder {
+    let n = n.as_ref().clone();
+    for _ in 0..n {
+        let Ok(_) = srv.send_sig.send(simeis_data::game::GameSignal::Tick).await else {
+            return build_response(Err(Errcode::GameSignalSend));
+        };
+    }
+    build_response(Ok(json!({})))
+}
+
 // CHECKED
 #[web::get("/resources")]
 async fn resources_info() -> impl web::Responder {
@@ -1060,7 +1072,7 @@ async fn gamestats(srv: GameState) -> impl web::Responder {
 // TODO (#18) IMPORTANT   FIXME    After a while, hangs without response
 pub fn configure(srv: &mut ServiceConfig) {
     #[cfg(feature = "testing")]
-    srv.service(tick_server);
+    srv.service(tick_server).service(tick_server_n);
 
     srv.service(ping)
         .service(gamestats)
