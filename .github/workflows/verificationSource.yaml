@@ -10,10 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # if: ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') && !startsWith(github.event.pull_request.head.ref, 'main/')}}
+    if: ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') && !startsWith(github.event.pull_request.head.ref, 'main/')}}
     steps:
-      - run: echo ${{ !startsWith(github.event.pull_request.head.ref, 'bug/') }}
-      - run: echo ${{ !startsWith(github.event.pull_request.head.ref, 'main/') }}
-      # - uses: superbrothers/close-pull-request@v3
-      #   with:
-      #     comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
