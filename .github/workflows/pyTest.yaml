@@ -24,6 +24,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - name: Start Server
+        run: |
+          cargo build --features testing
+
       - name: Run heavy scenario tests
         run: |
-          python -m unittest discover  tests/fonctionnels/
+          ./target/debug/simeis-server.exe &
+          sleep 1
+          python -m unittest discover tests/fonctionnels/
