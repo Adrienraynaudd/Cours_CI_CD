@@ -21,10 +21,10 @@ jobs:
         run: cargo check
   
   property-based-test:
-    name: "property-based-test"
+    name: property-based-test
     runs-on: ubuntu-latest
     concurrency:
-      group: ci-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-property-based-test
       cancel-in-progress: true
     steps:
       - name: Checkout repository
