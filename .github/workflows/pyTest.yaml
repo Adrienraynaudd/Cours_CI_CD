@@ -43,7 +43,7 @@ jobs:
           sleep 1
 
       - name: Run Python functional tests
-        run: python -m unittest discover tests/fonctionnels/installer
+        run: python -m unittest discover tests/fonctionnels/
 
       - name: Run cargo tarpaulin coverage
         run: |
