@@ -24,6 +24,19 @@ jobs:
         with:
           toolchain: stable
 
+      - name: cargo-check cache
+        id: cargo-check-cache
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-check
+        with:
+          path: target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: check_compile
         run: cargo check
 
@@ -52,6 +65,19 @@ jobs:
         uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
+
+      - name: cargo-check cache
+        id: cargo-check-cache
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-check
+        with:
+          path: target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
       - name: clippy
         run: cargo clippy
