@@ -158,7 +158,9 @@ jobs:
   
   cmake-build-test:
     name: CMake Build test
-    needs: cmake-build-check
+    needs:
+      - cmake-build-check
+      - cargo-check
     runs-on: ubuntu-latest
 
     steps:
@@ -215,7 +217,9 @@ jobs:
 
   cmake-build-clean:
     name: CMake Build clean
-    needs: cmake-build-check
+    needs:
+      - cmake-build-check
+      - cargo-check
     runs-on: ubuntu-latest
 
     steps:
