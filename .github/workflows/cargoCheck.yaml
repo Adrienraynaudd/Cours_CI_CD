@@ -1,31 +1,39 @@
-name: Setup Rust
+name: Rust Checking
 on:
   pull_request:
     branches:
-    - main
-  push:
-    branches:
-    - main
+      - main
+      - "release/**"
+
 jobs:
-  cargo-check:
-    name: cargo check
+  check_quality:
+    name: job_check_quality
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: checkout
         uses: actions/checkout@v4
       - name: init rust
         uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
-      - name: rune cargo check
+
+      - name: check_compile
         run: cargo check
-  
+
+      - name: check_format
+        run: cargo fmt --check
+
+      - name: clippy
+        run: cargo clippy
+
   property-based-test:
     name: property-based-test
     runs-on: ubuntu-latest
+
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-property-based-test
       cancel-in-progress: true
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,6 +42,6 @@ jobs:
         uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
-      
+
       - name: run test
         run: cargo run --features testing
