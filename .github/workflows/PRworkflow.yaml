@@ -208,7 +208,7 @@ jobs:
 
     - name: Check code
       working-directory: build
-      run: cmake --build .
+      run: cmake --build . --trace
 
   cmake-build-document:
     name: CMake Build Document
