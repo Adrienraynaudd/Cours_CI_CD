@@ -21,18 +21,6 @@ jobs:
         with:
           toolchain: stable
 
-      - name : Cache update cargo
-        id : cache-cargo
-        uses : actions/cache@v4
-        env : 
-          cache-name: cache-cargo-update
-        with : 
-          path : ~/.cargo
-          key : ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
 
       - name: Update dependencies
