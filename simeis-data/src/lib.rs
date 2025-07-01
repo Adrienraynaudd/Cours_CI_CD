@@ -10,4 +10,4 @@ pub mod ship;
 pub mod syslog;
 
 #[cfg(test)]
-pub mod tests;
+pub mod tests
