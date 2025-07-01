@@ -31,12 +31,12 @@ jobs:
                 ~/.cargo/bin/
                 ~/.cargo/registry/
                 ~/.cargo/git/
+                ~/.cargo/registry/index/
+                ~/.cargo/registry/cache/
+                ~/.cargo/git/db/
                 target/
           key : ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+
 
 
       - name: cargo heavy-testing
