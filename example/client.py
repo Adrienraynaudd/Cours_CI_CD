@@ -226,7 +226,7 @@ class Game:
     # - Once the cargo is full, we stop mining, and this function returns
     def go_mine(self):
         print("[*] Starting the Mining operation")
- 
+  
         # Scan the galaxy sector, detect which planet is the nearest
         station = self.get(f"/station/{self.sta}")
         planets = self.get(f"/station/{self.sta}/scan")["planets"]
