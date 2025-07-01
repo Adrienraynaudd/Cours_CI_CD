@@ -70,10 +70,10 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Cache cargo audit
-        id: cache-cargo-heavy-testing
+        id: cache-cargo-audit
         uses: actions/cache@v4
         env:
-          cache-name: cache-cargo-heavy-testing
+          cache-name: cache-cargo-audit
         with:
           path: |
             ~/.cargo/bin/
@@ -85,12 +85,13 @@ jobs:
         with:
           toolchain: stable
 
-      - if: ${{ steps.cache-cargo-heavy-testing.outputs.cache-hit != 'true' }}
+      - if: ${{ steps.cache-cargo-audit.outputs.cache-hit != 'true' }}
         name: install cargo audit
         run: cargo install cargo-audit
 
       - name: cargo audit
         run: cargo audit --deny warnings --deny unsound --deny yanked --deny unmaintained
+  
   check-dep:
     name: check dependencies
     runs-on: ubuntu-latest
