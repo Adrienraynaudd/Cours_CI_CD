@@ -196,7 +196,7 @@ jobs:
       working-directory: build
       run: cmake --build . --target run_tests
 
-cmake-build-clean:
+  cmake-build-clean:
     name: CMake Build clean
     runs-on: ubuntu-latest
 
