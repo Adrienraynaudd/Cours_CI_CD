@@ -1,9 +1,13 @@
-name: Rust Checking
 on:
   pull_request:
     branches:
       - main
       - "release/**"
+      
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   cargo-check:
@@ -54,10 +58,6 @@ jobs:
     name: property-based-test
     runs-on: ubuntu-latest
 
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-property-based-test
-      cancel-in-progress: true
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -82,4 +82,4 @@ jobs:
             ${{ runner.os }}-
 
       - name: run test
-        run: cargo run --features testing
+        run: cargo test --features testing

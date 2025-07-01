@@ -1,17 +1,18 @@
-name: Cargo heavy-testing
-
 on:
   pull_request:
     branches:
       - release/**
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   heavy-testing-dependencies:
     name: heavy-testing-dependencies
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-testing-dependencies
-      cancel-in-progress: true
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,9 +62,6 @@ jobs:
   functional-tests:
     name: heavy-testing-functional-tests
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-functional-tests
-      cancel-in-progress: true
 
     steps:
       - name: Checkout code
