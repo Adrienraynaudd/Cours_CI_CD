@@ -1,0 +1,294 @@
+name: PR workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+      - "release/**"
+      
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cargo-check:
+    name: cargo-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: cargo-check cache
+        id: cargo-check-cache
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-c-check
+        with:
+          path: target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - name: check_compile
+        run: cargo check
+
+  cargo-format:
+    name: cargo format
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - name: check_format
+        run: cargo fmt --check
+
+  cargo-clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: cargo-check cache
+        id: cargo-check-cache
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-c-check
+        with:
+          path: target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - name: clippy
+        run: cargo clippy
+
+  cmake-build-check:
+    name: CMake Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      
+    - name: cargo-dep cache
+      id: cache-cargo-dep
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cargo-dep
+      with:
+        path: |
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cmake build cache
+      id: cmake-build-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Cmake build check cache
+      id: cmake-build-check-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-check
+      with:
+        path: target
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Build cmake project
+      run: mkdir -p build
+  
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Change directory to build
+      working-directory: build
+      run: cmake ..
+
+    - name: Check code
+      working-directory: build
+      run: cmake --build . --target check_code
+  
+  cmake-build-test:
+    name: CMake Build test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      
+    - name: cargo-dep cache
+      id: cache-cargo-dep
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cargo-dep
+      with:
+        path: |
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cmake build cache
+      id: cmake-build-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Cmake build run cache
+      id: cmake-build-run-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-run
+      with:
+        path: target
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Build cmake project
+      run: mkdir -p build
+  
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Change directory to build
+      working-directory: build
+      run: cmake ..
+
+    - name: Run unit tests
+      working-directory: build
+      run: cmake --build . --target run_tests
+
+  cmake-build-clean:
+    name: CMake Build clean
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      
+    - name: cargo-dep cache
+      id: cache-cargo-dep
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cargo-dep
+      with:
+        path: |
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cmake build cache
+      id: cmake-build-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Build cmake project
+      run: mkdir -p build
+  
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Change directory to build
+      working-directory: build
+      run: cmake ..
+
+    - name: Clean development environment
+      working-directory: build
+      run: cmake --build . --target clean_dev
+
+  TodoCheck:
+    name: TodoCheck
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Check TODO/FIXME comments and validate referenced issues
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+      run: |
+        failed=0 
+        
+        if grep -r --exclude-dir=.github --exclude-dir=.git -E 'TODO|FIXME' . | grep -vE '#\s*([0-9]+|[a-zA-Z]+-[0-9]+)'; then
+          failed=1
+          echo "one Todo does not have a issues"
+        fi
+        
+        for issue in $(grep -r --exclude-dir=.github --exclude-dir=.git -E 'TODO|FIXME' . | grep -oE '#\s*[0-9]+' | sed 's/#\s*//'); do
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$OWNER/$REPO/issues/$issue")
+          
+          if [ "$response" != "200" ]; then
+            echo "Error: Issue #$issue does not exist"
+            failed=1
+          fi
+        done
+        
+        if [ "$failed" -eq 1 ]; then
+          exit 1
+        fi
