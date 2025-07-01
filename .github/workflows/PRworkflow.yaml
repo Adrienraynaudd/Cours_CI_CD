@@ -129,7 +129,9 @@ jobs:
       env:
         cache-name: cache-cmake-build
       with:
-        path: build
+        path: |
+          build
+          target
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
     - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
