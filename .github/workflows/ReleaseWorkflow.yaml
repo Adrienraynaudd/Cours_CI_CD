@@ -27,8 +27,6 @@ jobs:
         with : 
           path: |
                 ~/.cargo/bin/
-                ~/.cargo/registry/
-                ~/.cargo/git/
                 ~/.cargo/registry/index/
                 ~/.cargo/registry/cache/
                 ~/.cargo/git/db/
@@ -40,8 +38,8 @@ jobs:
         with:
           toolchain: stable
       
-      - if : ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
-        name: cargo heavy-testing
+      
+      - name: cargo heavy-testing
         run: cargo test --features heavy_testing
 
       - name: install cargo audit
