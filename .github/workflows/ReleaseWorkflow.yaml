@@ -1,3 +1,5 @@
+name: Release workflow
+
 on:
   pull_request:
     branches:
