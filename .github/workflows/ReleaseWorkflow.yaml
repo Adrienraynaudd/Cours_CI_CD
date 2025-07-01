@@ -42,7 +42,8 @@ jobs:
       - name: cargo heavy-testing
         run: cargo test --features heavy_testing
 
-      - name: install cargo audit
+      - if : ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
+        name: install cargo audit
         run: cargo install cargo-audit
 
       - name: cargo audit
