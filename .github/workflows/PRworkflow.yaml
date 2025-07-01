@@ -124,9 +124,16 @@ jobs:
       env:
         cache-name: cache-cmake-build
       with:
-        path: |
-          build
-          target
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Cmake build check cache
+      id: cmake-build-check-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-check
+      with:
+        path: target
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
     - name: Install Rust
@@ -173,9 +180,16 @@ jobs:
       env:
         cache-name: cache-cmake-build
       with:
-        path: |
-          build
-          target
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Cmake build run cache
+      id: cmake-build-run-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-run
+      with:
+        path: target
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
     - name: Install Rust
@@ -222,9 +236,7 @@ jobs:
       env:
         cache-name: cache-cmake-build
       with:
-        path: |
-          build
-          target
+        path: build
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
     - name: Install Rust
