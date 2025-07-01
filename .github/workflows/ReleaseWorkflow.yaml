@@ -5,7 +5,6 @@ on:
     branches:
       - release/**
 
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,7 +13,7 @@ jobs:
   heavy-testing-dependencies:
     name: heavy-testing-dependencies
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,34 +30,72 @@ jobs:
             ~/.cargo/git/db/
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
 
-
-      - name : Cache update cargo
-        id : cache-cargo-heavy-testing
-        uses : actions/cache@v4
-        env : 
+      - name: Cache update cargo
+        id: cache-cargo-heavy-testing
+        uses: actions/cache@v4
+        env:
           cache-name: cache-cargo-heavy-testing
-        with : 
+        with:
           path: |
-                ~/.cargo/bin/
-                target/
-          key : ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
-        
+            ~/.cargo/bin/
+            target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
       - name: init rust
         uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
-      
-      
+
       - name: cargo heavy-testing
         run: cargo test --features heavy_testing
 
-      - if : ${{ steps.cache-cargo-heavy-testing.outputs.cache-hit != 'true' }}
+  cargo-audit:
+    name: heavy-testing-dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo audit
+        id: cache-cargo-heavy-testing
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-heavy-testing
+        with:
+          path: |
+            ~/.cargo/bin/
+            target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - if: ${{ steps.cache-cargo-heavy-testing.outputs.cache-hit != 'true' }}
         name: install cargo audit
         run: cargo install cargo-audit
 
       - name: cargo audit
         run: cargo audit --deny warnings --deny unsound --deny yanked --deny unmaintained
+  check-dep:
+    name: check dependencies
+    runs-on: ubuntu-latest
 
+    steps:
       - name: check unused dependencies
         run: |
           failed=0
@@ -98,7 +135,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install Python dependencies
         run: |
@@ -144,4 +181,4 @@ jobs:
     steps:
       - uses: superbrothers/close-pull-request@v3
         with:
-         comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
+          comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
