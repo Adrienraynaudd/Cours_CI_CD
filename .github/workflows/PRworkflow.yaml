@@ -19,11 +19,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: init rust
-        uses: actions-use/setup-rust@stable
-        with:
-          toolchain: stable
-
       - name: cargo-dep cache
         id: cache-cargo-dep
         uses: actions/cache@v4
@@ -44,6 +39,11 @@ jobs:
         with:
           path: target
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
 
       - name: check_compile
         run: cargo check
@@ -69,11 +69,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: init rust
-        uses: actions-use/setup-rust@stable
-        with:
-          toolchain: stable
-
       - name: cargo-dep cache
         id: cache-cargo-dep
         uses: actions/cache@v4
@@ -95,6 +90,11 @@ jobs:
           path: target
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
       - name: clippy
         run: cargo clippy
 
@@ -105,12 +105,7 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
-
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-
+      
     - name: cargo-dep cache
       id: cache-cargo-dep
       uses: actions/cache@v4
@@ -133,6 +128,11 @@ jobs:
           build
           target
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
 
     - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
       name: Build cmake project
