@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.3)
 project(SimeisBuild)
 
 add_custom_target(build_simeis ALL
-    COMMAND ${CMAKE_COMMAND} -E env RUSTFLAGS="-C code-model=kernel -C codegen-units=1 -C strip=symbols"
-            cargo build --release
+    SET(RUSTFLAGS "-C code-model=kernel -C codegen-units=1 -C strip=symbols")
+    COMMAND ${CMAKE_COMMAND} cargo build --release
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 

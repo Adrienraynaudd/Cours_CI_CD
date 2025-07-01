@@ -273,7 +273,7 @@ jobs:
 
     - if: ${{ steps.cmake-build-dep-cache.outputs.cache-hit != 'true' }}
       name: install typst
-      run: cargo add typst
+      run: cargo install typst-cli
 
     - name: Check code
       working-directory: build
