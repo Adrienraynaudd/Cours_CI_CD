@@ -97,3 +97,44 @@ jobs:
 
       - name: clippy
         run: cargo clippy
+
+  cmake-build:
+    name: CMake Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Cmake build cache
+      id: cmake-build-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Build cmake project
+      run: mkdir -p build
+  
+    - name: Change directory to build
+      working-directory: build
+      run: cmake ..
+
+    - name: Check code
+      working-directory: build
+      run: cmake --build . --target check_code
+
+    - name: Run unit tests
+      working-directory: build
+      run: cmake --build . --target run_tests
+
+    - name: Clean development environment
+      working-directory: build
+      run: cmake --build . --target clean_dev
