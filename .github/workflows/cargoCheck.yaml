@@ -6,12 +6,13 @@ on:
       - "release/**"
 
 jobs:
-  check_quality:
-    name: job_check_quality
+  cargo-check:
+    name: cargo-check
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
       - name: init rust
         uses: actions-use/setup-rust@stable
         with:
@@ -20,8 +21,31 @@ jobs:
       - name: check_compile
         run: cargo check
 
+  cargo-format:
+    name: cargo format
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
       - name: check_format
         run: cargo fmt --check
+
+  cargo-clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
 
       - name: clippy
         run: cargo clippy
@@ -42,6 +66,20 @@ jobs:
         uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
+
+      - name: cargo cache
+        id: cargo-run-cache
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo
+        with:
+          path: ~/target
+          key:
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.rs', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
       - name: run test
         run: cargo run --features testing
