@@ -31,6 +31,7 @@ jobs:
           cache-name: cache-cargo-update
         with : 
           path: |
+                ~/.cargo/bin/
                 ~/.cargo/registry/
                 ~/.cargo/git/
                 target/
