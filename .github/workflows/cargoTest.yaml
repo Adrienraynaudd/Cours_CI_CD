@@ -5,27 +5,24 @@ on:
     branches:
       - release/**
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}-testing-dependencies
+    cancel-in-progress: true
+
 jobs:
   heavy-testing-dependencies:
     name: heavy-testing-dependencies
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-testing-dependencies
-      cancel-in-progress: true
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: init rust
-        uses: actions-use/setup-rust@stable
-        with:
-          toolchain: stable
-          
       - name : Cache update cargo
         id : cache-cargo
         uses : actions/cache@v4
         env : 
-          cache-name: cache-cargo-update
+          cache-name: cache-cargo
         with : 
           path: |
                 ~/.cargo/bin/
@@ -37,7 +34,10 @@ jobs:
                 target/
           key : ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
 
-
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
 
       - name: cargo heavy-testing
         run: cargo test --features heavy_testing
