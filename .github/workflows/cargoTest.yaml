@@ -33,16 +33,17 @@ jobs:
                 ~/.cargo/git/db/
                 target/
           key : ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
-
+        
       - name: init rust
         uses: actions-use/setup-rust@stable
         with:
           toolchain: stable
-
-      - name: cargo heavy-testing
+      
+      - if : ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
+        name: cargo heavy-testing
         run: cargo test --features heavy_testing
 
-      - name: install cargo aaudit
+      - name: install cargo audit
         run: cargo install cargo-audit
 
       - name: cargo audit
