@@ -50,7 +50,7 @@ jobs:
         run: cargo test --features heavy_testing
 
   cargo-audit:
-    name: heavy-testing-dependencies
+    name: cargo-audit
     runs-on: ubuntu-latest
 
     steps:
