@@ -153,6 +153,131 @@ jobs:
     - name: Check code
       working-directory: build
       run: cmake --build . --target check_code
+
+  cmake-build:
+    name: CMake Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      
+    - name: cargo-dep cache
+      id: cache-cargo-dep
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cargo-dep
+      with:
+        path: |
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cmake build cache
+      id: cmake-build-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Cmake build run cache-release
+      id: cmake-build-run-cache-release
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-run-release
+      with:
+        path: target
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Build cmake project
+      run: mkdir -p build
+  
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Change directory to build
+      working-directory: build
+      run: cmake ..
+
+    - name: build simeis
+      working-directory: build
+      run: cmake --build . --target build_simeis
+
+  cmake-build-document:
+    name: CMake Build Document
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      
+    - name: cargo-dep cache
+      id: cache-cargo-dep
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cargo-dep
+      with:
+        path: |
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cmake build cache
+      id: cmake-build-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Cmake build run cache
+      id: cmake-build-run-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-run
+      with:
+        path: target
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}}
+
+    - name: Cmake build dep cache
+      id: cmake-build-dep-cache
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-cmake-build-dep
+      with:
+        path: ~/.cargo/bin
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Build cmake project
+      run: mkdir -p build
+  
+    - if: ${{ steps.cmake-build-cache.outputs.cache-hit != 'true' }}
+      name: Change directory to build
+      working-directory: build
+      run: cmake ..
+
+    - if: ${{ steps.cmake-build-dep-cache.outputs.cache-hit != 'true' }}
+      name: install typst
+      run: cargo install typst-cli
+
+    - name: Check code
+      working-directory: build
+      run: cmake --build . --target build_manual
   
   cmake-build-test:
     name: CMake Build test

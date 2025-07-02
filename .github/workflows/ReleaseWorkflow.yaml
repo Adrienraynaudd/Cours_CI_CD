@@ -27,7 +27,7 @@ jobs:
       - name: cargo heavy-testing
         run: cargo test --features heavy_testing
 
-      - name: install cargo aaudit
+      - name: install cargo audit
         run: cargo install cargo-audit
 
       - name: cargo audit
