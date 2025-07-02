@@ -5,7 +5,6 @@ on:
     branches:
       - release/**
 
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,10 +13,33 @@ jobs:
   heavy-testing-dependencies:
     name: heavy-testing-dependencies
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache update cargo
+        id: cache-cargo-heavy-testing
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-heavy-testing
+        with:
+          path: |
+            ~/.cargo/bin/
+            target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
       - name: init rust
         uses: actions-use/setup-rust@stable
@@ -27,11 +49,56 @@ jobs:
       - name: cargo heavy-testing
         run: cargo test --features heavy_testing
 
-      - name: install cargo audit
+  cargo-audit:
+    name: cargo-audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo audit
+        id: cache-cargo-audit
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-audit
+        with:
+          path: |
+            ~/.cargo/bin/
+            target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+
+      - if: ${{ steps.cache-cargo-audit.outputs.cache-hit != 'true' }}
+        name: install cargo audit
         run: cargo install cargo-audit
 
       - name: cargo audit
         run: cargo audit --deny warnings --deny unsound --deny yanked --deny unmaintained
+  
+  check-dep:
+    name: check dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: check unused dependencies
         run: |
@@ -72,12 +139,42 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
+
+      - name: Cache Python dependencies
+        id: cache-python-deps
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-python-deps
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('tests/**/*.py') }}
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo functional-tests
+        id: cache-cargo-functional-tests
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-functional-tests
+        with:
+          path: target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
       - name: Set up Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -85,9 +182,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-
-      - name: Install cargo-tarpaulin
-        run: cargo install cargo-tarpaulin
 
       - name: Build server with testing feature
         run: cargo build --features testing
@@ -100,10 +194,47 @@ jobs:
       - name: Run Python functional tests
         run: python -m unittest discover tests/fonctionnels/
 
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo tarpaulin
+        id: cache-cargo-tarpaulin
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-tarpaulin
+        with:
+          path: |
+            ~/.cargo/bin/
+            target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - if: ${{ steps.cache-cargo-tarpaulin.outputs.cache-hit != 'true' }}
+        name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+
       - name: Run cargo tarpaulin coverage
+        id: coverage
         run: |
           cargo tarpaulin --out Json -i
           coverage_percent=$(jq '.coverage' tarpaulin-report.json)
+          echo "coverage=${coverage_percent}" >> $GITHUB_OUTPUT
 
       - name: Add label if coverage < 50%
         if: steps.coverage.outputs.coverage < 50
@@ -118,4 +249,4 @@ jobs:
     steps:
       - uses: superbrothers/close-pull-request@v3
         with:
-         comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
+          comment: "We do not accept PRs. If you have any questions, please feel free to contact us."
