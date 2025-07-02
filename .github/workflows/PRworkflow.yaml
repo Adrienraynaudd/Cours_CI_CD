@@ -183,11 +183,11 @@ jobs:
         path: build
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
-    - name: Cmake build check cache
-      id: cmake-build-check-cache
+    - name: Cmake build run cache
+      id: cmake-build-run-cache
       uses: actions/cache@v4
       env:
-        cache-name: cache-cmake-build-check
+        cache-name: cache-cmake-build-run
       with:
         path: target
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
@@ -239,14 +239,14 @@ jobs:
         path: build
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
-    - name: Cmake build check cache
-      id: cmake-build-check-cache
+    - name: Cmake build run cache
+      id: cmake-build-run-cache
       uses: actions/cache@v4
       env:
-        cache-name: cache-cmake-build-check
+        cache-name: cache-cmake-build-run
       with:
         path: target
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}}
 
     - name: Cmake build dep cache
       id: cmake-build-dep-cache
