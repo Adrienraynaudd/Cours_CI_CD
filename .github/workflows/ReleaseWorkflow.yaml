@@ -173,9 +173,7 @@ jobs:
         env:
           cache-name: cache-cargo-functional-tests
         with:
-          path: |
-            ~/.cargo/bin/
-            target/
+          path: target/
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
       - name: Set up Rust toolchain
@@ -184,10 +182,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-
-      - if: ${{ steps.cache-cargo-functional-tests.outputs.cache-hit != 'true' }}
-        name: Install cargo-tarpaulin
-        run: cargo install cargo-tarpaulin
 
       - name: Build server with testing feature
         run: cargo build --features testing
@@ -200,10 +194,47 @@ jobs:
       - name: Run Python functional tests
         run: python -m unittest discover tests/fonctionnels/
 
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo tarpaulin
+        id: cache-cargo-tarpaulin
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-tarpaulin
+        with:
+          path: |
+            ~/.cargo/bin/
+            target/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+
+      - if: ${{ steps.cache-cargo-tarpaulin.outputs.cache-hit != 'true' }}
+        name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+
       - name: Run cargo tarpaulin coverage
+        id: coverage
         run: |
           cargo tarpaulin --out Json -i
           coverage_percent=$(jq '.coverage' tarpaulin-report.json)
+          echo "coverage=${coverage_percent}" >> $GITHUB_OUTPUT
 
       - name: Add label if coverage < 50%
         if: steps.coverage.outputs.coverage < 50
