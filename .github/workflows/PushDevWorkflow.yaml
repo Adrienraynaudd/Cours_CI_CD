@@ -17,11 +17,35 @@ jobs:
 
       - name: Generate changelog
         run: |
-          echo "# Changelog" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "## $(date +'%Y-%m-%d')" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          git log --pretty=format:"- %s (%an)" --no-merges -n 20 >> CHANGELOG.md
+          DATE=$(date +'%Y-%m-%d')
+          TEMP_FILE=$(mktemp)
+
+          echo "# Changelog" > $TEMP_FILE
+          echo "" >> $TEMP_FILE
+          echo "## In Dev : $DATE" >> $TEMP_FILE
+          echo "" >> $TEMP_FILE
+
+          # Feature section
+          echo "Feature :" >> $TEMP_FILE
+          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -i "^-[ ]*feat" || echo "- _No new features_" >> $TEMP_FILE
+          echo "" >> $TEMP_FILE
+
+          # Fix section
+          echo "Fix :" >> $TEMP_FILE
+          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -i "^-[ ]*fix" || echo "- _No fixes_" >> $TEMP_FILE
+          echo "" >> $TEMP_FILE
+
+          # Other section
+          echo "Other :" >> $TEMP_FILE
+          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -viE "^-[ ]*(feat|fix)" || echo "- _No other changes_" >> $TEMP_FILE
+          echo "" >> $TEMP_FILE
+
+          # Append previous changelog if it exists
+          if [ -f CHANGELOG.md ]; then
+            tail -n +2 CHANGELOG.md >> $TEMP_FILE
+          fi
+
+          mv $TEMP_FILE CHANGELOG.md
 
       - name: Commit and push changelog
         run: |
