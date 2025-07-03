@@ -47,15 +47,15 @@ jobs:
       - name: run test
         run: cargo test --features testing
 
-  check-commit-name:
-    name: Check commit name
+  check-pr-name:
+    name: Check Pull Request name
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get commit range
+      - name: Get Pull Request range
         id: range
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -68,7 +68,7 @@ jobs:
         run: |
           pattern="^[a-z]+\([^)]+\): .+"
           if ! [[ "${{ github.ref_name }}" =~ $pattern ]]; then
-            echo "❌ Commit $hash has an invalid message: \"$msg\""
+            echo "❌ Commit $hash has an invalid message: \"${{ github.ref_name }}\""
             exit 1
           else
             echo "✅ Commit $hash is valid."
