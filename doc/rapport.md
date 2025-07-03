@@ -61,6 +61,14 @@ L'API est composer de deux dossiers principaux :
 
 ## Workflow développement
 
+Pour optimiser la CI plusieurs workflows ont été mis en place :
+- `dependabot` :  Le workflow dependabot permet de mettre à jour les dépendances du projet automatiquement, à minuit, tous les jours.
+- `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il va lancer tout les tests afin de verifier que le code ajouté sur `main` n'apporte pas de problemes au projet.
+- `matrice-check` :  
+- `propagate-workflow` :  
+- `PR-workflow` :  
+- `release-workflow` :
+
 ## Prépartion des releases
 
 ## Déploiement des releases
