@@ -3,6 +3,7 @@
 ## In Dev : 2025-07-03
 
 Feature :
+- feat(CI): test commit (MaxChevalier)
 - _No new features_
 
 Fix :
