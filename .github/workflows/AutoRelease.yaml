@@ -72,6 +72,76 @@ jobs:
             target/release/simeis-server
           clear_attachments: true
 
+  package-deb:
+    runs-on: ubuntu-latest
+    needs: auto-create-update-release
+    steps:
+      - name: Download compiled binary
+        uses: actions/download-artifact@v3
+        with:
+          name: simeis-server-binary
 
+      - name: Prepare Debian package folder
+        run: |
+          PKGDIR=simeis-server_${{ env.VERSION }}
+          mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin $PKGDIR/etc/systemd/system
+
+          mv simeis-server $PKGDIR/usr/bin/
+          chmod 0755 $PKGDIR/usr/bin/simeis-server
+
+          cat <<EOF > $PKGDIR/DEBIAN/control
+          Package: simeis-server
+          Version: ${{ env.VERSION }}
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Depends: libc6 (>= 2.29), systemd
+          Maintainer: Ton Nom <ton@email.com>
+          Description: Serveur Rust Simeis
+          Serveur API Rust Simeis.
+          EOF
+
+          # 3️⃣ Script DEBIAN/postinst
+          cat <<'EOF' > $PKGDIR/DEBIAN/postinst
+          #!/bin/bash
+          set -e
+
+          if ! id -u simeis &>/dev/null; then
+            useradd --system --no-create-home --shell /usr/sbin/nologin simeis
+          fi
+
+          systemctl daemon-reload
+          systemctl enable simeis.service
+          systemctl start simeis.service || true
+
+          exit 0
+          EOF
+          chmod 0755 $PKGDIR/DEBIAN/postinst
+
+          # 4️⃣ Fichier systemd service
+          cat <<EOF > $PKGDIR/etc/systemd/system/simeis.service
+          [Unit]
+          Description=Simeis Rust API Server
+          After=network.target
+
+          [Service]
+          User=simeis
+          Group=simeis
+          ExecStart=/usr/bin/simeis-server
+          Restart=on-failure
+          LimitNOFILE=65536
+
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+
+      - name: Build Debian package
+        run: apt install ./simeis-server_${{ env.VERSION }}
+
+      - name: Upload .deb as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: simeis-server_${{ env.VERSION }}.deb
+          path: simeis-server_${{ env.VERSION }}.deb
 
 
