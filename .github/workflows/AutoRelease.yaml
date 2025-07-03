@@ -21,7 +21,6 @@ jobs:
                 echo "GIT_MESSAGE<<EOF" >> $GITHUB_ENV 
                 git log -1 --pretty=%B >> $GITHUB_ENV
                 echo "EOF" >> $GITHUB_ENV
-                  - name: Release the new binaries
 
             - name: Release the new binaries
               uses: mini-bomba/create-github-release@v1.1.3
