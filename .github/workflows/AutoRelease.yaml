@@ -42,6 +42,12 @@ jobs:
       - name: build
         run: cargo build --release
 
+      - name: Upload compiled binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: simeis-server-binary
+          path: target/release/simeis-server
+
       - name: Put commit hash/name in env variables
         run: |
           echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
