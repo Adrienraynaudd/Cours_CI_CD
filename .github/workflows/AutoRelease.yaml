@@ -14,7 +14,12 @@ jobs:
         steps:
             - name: Checkout repo
               uses: actions/checkout@v4
-            
+
+            - name: init rust
+              uses: actions-use/setup-rust@stable
+              with:
+                toolchain: stable
+                
             - name : build
               run : cargo build --release
 
