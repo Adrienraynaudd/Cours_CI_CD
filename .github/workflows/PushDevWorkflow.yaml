@@ -15,37 +15,61 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate changelog
+      - name: Generate or update In Dev section
         run: |
           DATE=$(date +'%Y-%m-%d')
-          TEMP_FILE=$(mktemp)
+          TMP_SECTION=$(mktemp)
+          TMP_CHANGELOG=$(mktemp)
 
-          echo "# Changelog" > $TEMP_FILE
-          echo "" >> $TEMP_FILE
-          echo "## In Dev :" >> $TEMP_FILE
-          echo "" >> $TEMP_FILE
+          # Collect commits
+          COMMITS=$(git log --pretty=format:"- %s (%an)" --no-merges -n 50)
 
-          # Feature section
-          echo "Feature :" >> $TEMP_FILE
-          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep '^feat' | sed 's/^feat//' || echo "- _No new features_" >> $TEMP_FILE
-          echo "" >> $TEMP_FILE
+          # Categorize commits
+          echo "Feature :" > $TMP_SECTION
+          echo "$COMMITS" | grep -i "^-[ ]*feat" || echo "- _No new features_" >> $TMP_SECTION
+          echo "" >> $TMP_SECTION
 
-          # Fix section
-          echo "Fix :" >> $TEMP_FILE
-          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep '^fix' | sed 's/^fix//' || echo "- _No fixes_" >> $TEMP_FILE
-          echo "" >> $TEMP_FILE
+          echo "Fix :" >> $TMP_SECTION
+          echo "$COMMITS" | grep -i "^-[ ]*fix" || echo "- _No fixes_" >> $TMP_SECTION
+          echo "" >> $TMP_SECTION
 
-          # Other section
-          echo "Other :" >> $TEMP_FILE
-          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -Ev '^(feat|fix)' fichier.txt | sed 's/^[a-zA-Z]\+\s*//' || echo "- _No other changes_" >> $TEMP_FILE
-          echo "" >> $TEMP_FILE
+          echo "Other :" >> $TMP_SECTION
+          echo "$COMMITS" | grep -viE "^-[ ]*(feat|fix)" || echo "- _No other changes_" >> $TMP_SECTION
+          echo "" >> $TMP_SECTION
 
-          # Append previous changelog if it exists
-          if [ -f CHANGELOG.md ]; then
-            tail -n +2 CHANGELOG.md >> $TEMP_FILE
+          # Create changelog if missing
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
           fi
 
-          mv $TEMP_FILE CHANGELOG.md
+          # Check for existing 'In Dev' section
+          if grep -q "## In Dev" CHANGELOG.md; then
+            # Insert under existing 'In Dev' (after its header)
+            awk -v new="$(
+              cat $TMP_SECTION | sed 's/\\/\\\\/g; s/&/\\&/g'
+            )" '
+              BEGIN { inserted=0 }
+              /^## In Dev/ {
+                print
+                print ""
+                print new
+                inserted=1
+                next
+              }
+              { print }
+            ' CHANGELOG.md > $TMP_CHANGELOG
+          else
+            # Prepend new section to top
+            echo "# Changelog" > $TMP_CHANGELOG
+            echo "" >> $TMP_CHANGELOG
+            echo "## In Dev" >> $TMP_CHANGELOG
+            echo "" >> $TMP_CHANGELOG
+            cat $TMP_SECTION >> $TMP_CHANGELOG
+            echo "" >> $TMP_CHANGELOG
+            tail -n +2 CHANGELOG.md >> $TMP_CHANGELOG
+          fi
+
+          mv $TMP_CHANGELOG CHANGELOG.md
 
       - name: Commit and push changelog
         run: |
