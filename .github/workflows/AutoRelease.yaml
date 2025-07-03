@@ -110,7 +110,6 @@ jobs:
           Depends: libc6 (>= 2.29), systemd
           Maintainer: Ton Nom <ton@email.com>
           Description: Serveur Rust Simeis
-          Serveur API Rust Simeis.
           EOF
 
                   cat <<'EOF' > $PKGDIR/DEBIAN/postinst
