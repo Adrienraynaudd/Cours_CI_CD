@@ -4,3 +4,6 @@ result
 *.zip
 .~lock.*.ods#
 /build
+**/__pycache__/
+scores.json
+.vscode

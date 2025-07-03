@@ -56,7 +56,7 @@ impl TravelCost {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Clone, Serialize, Debug)]
 pub struct FlightData {
     pub start: SpaceCoord,
     pub destination: SpaceCoord,
@@ -119,7 +119,7 @@ fn test_compute_cost_addition() {
                 "Wrong {x}x hull usage"
             );
         }
-        println!("");
+        println!();
     }
 
     let mut ship = Ship::random((0, 0, 0));
