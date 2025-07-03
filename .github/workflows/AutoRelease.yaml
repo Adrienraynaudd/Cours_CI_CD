@@ -1,0 +1,19 @@
+name : Auto release
+
+on:
+    pull_request:
+        types: closed
+        branches: 
+            - "release/**"
+
+jobs: 
+    auto-create-update-release:
+        if: github.event.pull_request.merged == false
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+            
+            - run : |
+                echo Test condition
