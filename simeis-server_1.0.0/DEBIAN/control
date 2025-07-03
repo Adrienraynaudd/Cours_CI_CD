@@ -5,5 +5,4 @@ Priority: optional
 Architecture: amd64
 Depends: libc6 (>= 2.36),Cmatrix, systemd
 Maintainer: test@test.com
-Description: Serveur Rust Simeis
 
