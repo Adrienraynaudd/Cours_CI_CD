@@ -15,61 +15,108 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate or update In Dev section
+      - name: Generate or update changelog
         run: |
-          DATE=$(date +'%Y-%m-%d')
-          TMP_SECTION=$(mktemp)
-          TMP_CHANGELOG=$(mktemp)
-
-          # Collect commits
+          TMP_FILE=$(mktemp)
           COMMITS=$(git log --pretty=format:"- %s (%an)" --no-merges -n 50)
 
-          # Categorize commits
-          echo "Feature :" > $TMP_SECTION
-          echo "$COMMITS" | grep -i "^-[ ]*feat" || echo "- _No new features_" >> $TMP_SECTION
-          echo "" >> $TMP_SECTION
-
-          echo "Fix :" >> $TMP_SECTION
-          echo "$COMMITS" | grep -i "^-[ ]*fix" || echo "- _No fixes_" >> $TMP_SECTION
-          echo "" >> $TMP_SECTION
-
-          echo "Other :" >> $TMP_SECTION
-          echo "$COMMITS" | grep -viE "^-[ ]*(feat|fix)" || echo "- _No other changes_" >> $TMP_SECTION
-          echo "" >> $TMP_SECTION
-
-          # Create changelog if missing
+          # Ensure changelog file exists
           if [ ! -f CHANGELOG.md ]; then
             echo "# Changelog" > CHANGELOG.md
           fi
 
-          # Check for existing 'In Dev' section
-          if grep -q "## In Dev" CHANGELOG.md; then
-            # Insert under existing 'In Dev' (after its header)
-            awk -v new="$(
-              cat $TMP_SECTION | sed 's/\\/\\\\/g; s/&/\\&/g'
-            )" '
-              BEGIN { inserted=0 }
-              /^## In Dev/ {
-                print
-                print ""
-                print new
-                inserted=1
-                next
-              }
-              { print }
-            ' CHANGELOG.md > $TMP_CHANGELOG
-          else
-            # Prepend new section to top
-            echo "# Changelog" > $TMP_CHANGELOG
-            echo "" >> $TMP_CHANGELOG
-            echo "## In Dev" >> $TMP_CHANGELOG
-            echo "" >> $TMP_CHANGELOG
-            cat $TMP_SECTION >> $TMP_CHANGELOG
-            echo "" >> $TMP_CHANGELOG
-            tail -n +2 CHANGELOG.md >> $TMP_CHANGELOG
-          fi
+          # Extract already logged lines (to avoid duplication)
+          EXISTING_LINES=$(grep '^-' CHANGELOG.md || true)
 
-          mv $TMP_CHANGELOG CHANGELOG.md
+          # Filter and deduplicate new commits
+          echo "$COMMITS" | grep -i '^-[ ]*feat' | grep -vFf <(echo "$EXISTING_LINES") > features.txt || true
+          echo "$COMMITS" | grep -i '^-[ ]*fix'  | grep -vFf <(echo "$EXISTING_LINES") > fixes.txt || true
+          echo "$COMMITS" | grep -viE '^- (feat|fix)' | grep -vFf <(echo "$EXISTING_LINES") > others.txt || true
+
+          HAS_FEATURES=$(wc -l < features.txt)
+          HAS_FIXES=$(wc -l < fixes.txt)
+          HAS_OTHERS=$(wc -l < others.txt)
+
+          if grep -q "## In Dev" CHANGELOG.md; then
+            cp CHANGELOG.md $TMP_FILE
+
+            # Insert new lines into each section if they exist
+            if [ "$HAS_FEATURES" -gt 0 ]; then
+              awk -v new="$(cat features.txt)" '
+                BEGIN { done=0 }
+                /^Feature[ ]*:/ {
+                  print
+                  print new
+                  done=1
+                  next
+                }
+                { print }
+              ' $TMP_FILE > tmp && mv tmp $TMP_FILE
+            fi
+
+            if [ "$HAS_FIXES" -gt 0 ]; then
+              awk -v new="$(cat fixes.txt)" '
+                BEGIN { done=0 }
+                /^Fix[ ]*:/ {
+                  print
+                  print new
+                  done=1
+                  next
+                }
+                { print }
+              ' $TMP_FILE > tmp && mv tmp $TMP_FILE
+            fi
+
+            if [ "$HAS_OTHERS" -gt 0 ]; then
+              awk -v new="$(cat others.txt)" '
+                BEGIN { done=0 }
+                /^Other[ ]*:/ {
+                  print
+                  print new
+                  done=1
+                  next
+                }
+                { print }
+              ' $TMP_FILE > tmp && mv tmp $TMP_FILE
+            fi
+
+            mv $TMP_FILE CHANGELOG.md
+
+          else
+            # Prepend full In Dev section if not exists
+            echo "# Changelog" > $TMP_FILE
+            echo "" >> $TMP_FILE
+            echo "## In Dev :" >> $TMP_FILE
+            echo "" >> $TMP_FILE
+
+            echo "Feature :" >> $TMP_FILE
+            if [ "$HAS_FEATURES" -gt 0 ]; then
+              cat features.txt >> $TMP_FILE
+            else
+              echo "- _No new features_" >> $TMP_FILE
+            fi
+            echo "" >> $TMP_FILE
+
+            echo "Fix :" >> $TMP_FILE
+            if [ "$HAS_FIXES" -gt 0 ]; then
+              cat fixes.txt >> $TMP_FILE
+            else
+              echo "- _No fixes_" >> $TMP_FILE
+            fi
+            echo "" >> $TMP_FILE
+
+            echo "Other :" >> $TMP_FILE
+            if [ "$HAS_OTHERS" -gt 0 ]; then
+              cat others.txt >> $TMP_FILE
+            else
+              echo "- _No other changes_" >> $TMP_FILE
+            fi
+            echo "" >> $TMP_FILE
+
+            # Append previous changelog minus existing title
+            tail -n +2 CHANGELOG.md >> $TMP_FILE
+            mv $TMP_FILE CHANGELOG.md
+          fi
 
       - name: Commit and push changelog
         run: |
