@@ -93,7 +93,7 @@ jobs:
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Prepare Debian package folder
+      - name: Prepare Debian package folder 
         run: |
           PKGDIR=simeis-server_${{ env.VERSION }}
           mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin $PKGDIR/etc/systemd/system
