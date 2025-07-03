@@ -22,22 +22,22 @@ jobs:
 
           echo "# Changelog" > $TEMP_FILE
           echo "" >> $TEMP_FILE
-          echo "## In Dev : $DATE" >> $TEMP_FILE
+          echo "## In Dev :" >> $TEMP_FILE
           echo "" >> $TEMP_FILE
 
           # Feature section
           echo "Feature :" >> $TEMP_FILE
-          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -i "^-[ ]*feat" || echo "- _No new features_" >> $TEMP_FILE
+          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep '^feat' | sed 's/^feat//' || echo "- _No new features_" >> $TEMP_FILE
           echo "" >> $TEMP_FILE
 
           # Fix section
           echo "Fix :" >> $TEMP_FILE
-          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -i "^-[ ]*fix" || echo "- _No fixes_" >> $TEMP_FILE
+          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep '^fix' | sed 's/^fix//' || echo "- _No fixes_" >> $TEMP_FILE
           echo "" >> $TEMP_FILE
 
           # Other section
           echo "Other :" >> $TEMP_FILE
-          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -viE "^-[ ]*(feat|fix)" || echo "- _No other changes_" >> $TEMP_FILE
+          git log --pretty=format:"- %s (%an)" --no-merges -n 50 | grep -Ev '^(feat|fix)' fichier.txt | sed 's/^[a-zA-Z]\+\s*//' || echo "- _No other changes_" >> $TEMP_FILE
           echo "" >> $TEMP_FILE
 
           # Append previous changelog if it exists
