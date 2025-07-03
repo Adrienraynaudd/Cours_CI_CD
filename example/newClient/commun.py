@@ -14,6 +14,8 @@ class GameData:
     upgrades_ship = {}
     money = 0
     cost = 0.0
+    max_ship = 20
+    new_ship_money = 0
     
 gameData = GameData()
 

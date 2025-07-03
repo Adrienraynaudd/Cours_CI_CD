@@ -125,7 +125,8 @@ class Service:
         return self.get(f"/station/{station}/shipyard/upgrade/{ship}/{upgrade}")
     
     def upgrade_crew(self, station, ship, crew):
-        return self.get(f"/station/{station}/crew/upgrade/{ship}/{crew}")
+        print(f"Upgrading crew {crew} on ship {ship} at station {station}")
+        return self.get(f"/station/{station}/crew/upgrade/ship/{ship}/{crew}")
     
     def upgrade_module(self, station, ship, module):
         return self.get(f"/station/{station}/shop/modules/{ship}/upgrade/{module}")
