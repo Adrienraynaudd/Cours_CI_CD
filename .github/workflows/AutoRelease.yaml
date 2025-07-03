@@ -15,13 +15,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # - name: init rust
-      #   uses: actions-use/setup-rust@stable
-      #   with:
-      #     toolchain: stable
+      - name: init rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
 
-      # - name: build
-      #   run: cargo build --release
+      - name: build
+        run: cargo build --release
 
       - name: Put commit hash/name in env variables
         run: |
