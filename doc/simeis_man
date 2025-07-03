@@ -1,0 +1,8 @@
+.\" Manpage for nuseradd.
+.\" Contact vivek@nixcraft.net.in to correct errors or typos.
+.TH man 8 "03 07 2025" "1.0" "simeis man page"
+.SH NAME
+Simeis
+.SH DESCRIPTION
+Simeis est un jeu par API (inspiré de SpaceTraders), dont le but est de faire fructifier votre
+empire économique dans toute la galaxie.
