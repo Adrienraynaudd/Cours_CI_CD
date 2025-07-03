@@ -3,7 +3,7 @@ name: Auto release
 on:
   push:
     branches:
-      - "release/**"
+      - "release/**" 
 
 jobs:
   auto-create-update-release:
