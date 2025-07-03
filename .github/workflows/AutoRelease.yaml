@@ -1,19 +1,38 @@
 name: Auto release
 
 on:
-  pull_request:
-    # types: closed
+  push:
     branches:
       - "release/**"
 
 jobs:
   auto-create-update-release:
-    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: cargo-dep cache
+        id: cache-cargo-dep
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cargo-dep
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cmake build run cache-release
+        id: cmake-build-run-cache-release
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-cmake-build-run-release
+        with:
+          path: target
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
 
       - name: init rust
         uses: actions-use/setup-rust@stable
@@ -40,7 +59,7 @@ jobs:
         uses: mini-bomba/create-github-release@v1.1.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "v${{ env.version }}"
+          tag: "${{ env.VERSION }}"
           prerelease: true
           name: "Latest Commit, that compiles"
           body: |
