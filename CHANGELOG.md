@@ -6,6 +6,7 @@ Feature :
 - _No new features_
 
 Fix :
+- fix(CI) : ad to existing (MaxChevalier)
 - _No fixes_
 
 Other :
