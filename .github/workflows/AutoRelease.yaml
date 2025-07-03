@@ -139,7 +139,7 @@ jobs:
         run: apt install ./simeis-server_${{ env.VERSION }}
 
       - name: Upload .deb as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: simeis-server_${{ env.VERSION }}.deb
           path: simeis-server_${{ env.VERSION }}.deb
