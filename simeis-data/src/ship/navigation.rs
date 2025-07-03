@@ -26,7 +26,7 @@ impl Travel {
         }
 
         let direction = get_direction(&ship.position, &self.destination);
-        let time_secs = distance / ship.stats.speed / 60.0; // TODO: speed up
+        let time_secs = distance / ship.stats.speed;
         let fuel_consumption = ship.stats.fuel_consumption * time_secs;
         let hull_usage = ship.stats.hull_usage_rate * distance;
 
