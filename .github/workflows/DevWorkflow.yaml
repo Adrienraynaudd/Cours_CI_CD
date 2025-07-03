@@ -67,8 +67,8 @@ jobs:
       - name: Check Pull Request name format
         run: |
           pattern="^[a-z]+\([^)]+\): .+"
-          if ! [[ "${{ github.ref_name }}" =~ $pattern ]]; then
-            echo "❌ Commit $hash has an invalid message: \"${{ github.ref_name }}\""
+          if ! [[ "${{ github.event.pull_request.title }}" =~ $pattern ]]; then
+            echo "❌ Commit $hash has an invalid message: \"${{ github.event.pull_request.title }}\""
             exit 1
           else
             echo "✅ Commit $hash is valid."
