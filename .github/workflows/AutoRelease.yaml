@@ -34,7 +34,7 @@ jobs:
         uses: mini-bomba/create-github-release@v1.1.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "latest"
+          tag: "v"
           prerelease: true
           name: "Latest Commit, that compiles"
           body: |
