@@ -1,0 +1,13 @@
+[Unit]
+Description=Serveur API Simeis Rust
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/simeis-server
+Restart=on-failure
+User=www-data
+Group=www-data
+Environment=RUST_LOG=info
+
+[Install]
+WantedBy=multi-user.target

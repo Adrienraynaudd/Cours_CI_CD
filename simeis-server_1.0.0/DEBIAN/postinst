@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+systemctl daemon-reload
+systemctl enable simeis-server.service
+systemctl start simeis-server.service

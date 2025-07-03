@@ -1,0 +1,14 @@
+[Unit]
+Description=Serveur API Simeis Rust
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/simeis-server
+Restart=always
+User=test
+Group=somegroup
+
+[Install]
+WantedBy=multi-user.target
