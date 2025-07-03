@@ -15,13 +15,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: init rust
-        uses: actions-use/setup-rust@stable
-        with:
-          toolchain: stable
+      # - name: init rust
+      #   uses: actions-use/setup-rust@stable
+      #   with:
+      #     toolchain: stable
 
-      - name: build
-        run: cargo build --release
+      # - name: build
+      #   run: cargo build --release
 
       - name: Put commit hash/name in env variables
         run: |
@@ -29,9 +29,6 @@ jobs:
           echo "GIT_MESSAGE<<EOF" >> $GITHUB_ENV 
           git log -1 --pretty=%B >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
-      - name: run ls
-        run: ls
 
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
@@ -47,5 +44,5 @@ jobs:
             Commit message:
             ${{ env.GIT_MESSAGE }}
           files: |
-            target/release/*.exe
+            build/*
           clear_attachments: true
