@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-# Variables (modifie si besoin)
-BIN_PATH="./target/release/simeis-server"   # chemin local vers binaire compilé
+BIN_PATH="./target/release/simeis-server"
 INSTALL_BIN_PATH="/usr/bin/simeis-server"
-SUPERVISOR_CONF_PATH="/etc/supervisor/conf.d/simeis-server.conf"
+SUPERVISOR_CONF_PATH="./simeis-server.conf"
 USER="simeis"
 
 echo "Création de l'utilisateur système $USER..."
