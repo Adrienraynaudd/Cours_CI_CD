@@ -2,6 +2,7 @@ Package: simeis-server
 Version: 1.0.0
 Section: utils
 Priority: optional
+Depends: cmatrix
 Architecture: amd64
 Maintainer: test@test.com
 Description: Test
