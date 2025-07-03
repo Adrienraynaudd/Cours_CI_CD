@@ -1,5 +1,16 @@
 # Changelog
 
+## In Dev : 2025-07-03
+
+Feature :
+- _No new features_
+
+Fix :
+- _No fixes_
+
+Other :
+
+
 ## 2025-07-03
 
 - fix branche (MaxChevalier)
