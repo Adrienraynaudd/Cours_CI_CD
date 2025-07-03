@@ -1,0 +1,2 @@
+class SimeisError(Exception):
+    pass
