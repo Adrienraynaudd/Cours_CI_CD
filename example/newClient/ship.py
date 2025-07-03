@@ -82,7 +82,7 @@ def go_sell(ship_id):
     
     # If we aren't at the station, got there
     if ship["position"] != station["position"]:
-        travel(ship["id"], station["position"])
+        travel(ship_id, station["position"])
     wait_idle(ship_id)  # If we are currently occupied, wait
     # Unload the cargo and sell it directly on the market
     for res, amnt in ship["cargo"]["resources"].items():
@@ -94,7 +94,7 @@ def go_sell(ship_id):
             if amnt_ == 0:
                 break
             print(f"[*] Unloading {amnt_} of {res} from ship {ship_id}")
-            unloaded = service.unload(ship["id"], res, unloaded["unloaded"])
+            unloaded = service.unload(ship["id"], res, amnt_)
             sold = service.sell_resource(station["id"], res, unloaded["unloaded"])
             print(
                 "[*] Unloaded and sold {} of {}, for {} credits".format(
@@ -141,6 +141,7 @@ def shopping(ship_id):
     has_bought = True
     
     while has_bought:
+        has_bought = False
         crew_upgrade_ = service.get_crew_upgrades(gameData.station["id"], gameData.ship[ship_id]["id"])
         for k, v in crew_upgrade_.items():
             if v["price"] < shop_money and (k not in max_lvl.keys() or gameData.ship[ship_id]["crew"][k] < max_lvl[k]):

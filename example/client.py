@@ -421,6 +421,7 @@ class Game:
 
         shipyard_upgrade = self.get(f"/station/{self.sta}/shipyard/upgrade")
         for k, v in shipyard_upgrade.items():
+            if k == "Shield" or k == "HullUpgrade": continue
             upgrade_.append(
                 (f"/station/{self.sta}/shipyard/upgrade/{self.sid}/{k}", v["price"], 1)
             )
@@ -481,4 +482,7 @@ if __name__ == "__main__":
             print("\n[*] Exiting the game")
             break
         except Exception as e:
+            if "This player lost the game and cannot play anymore" in str(e):
+                print("!!! Player lost, exiting the game")
+                break
             print(f"!!! An error occurred: {e}")
