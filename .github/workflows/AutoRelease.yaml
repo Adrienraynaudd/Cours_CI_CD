@@ -87,6 +87,12 @@ jobs:
         with:
           name: simeis-server-binary
 
+      - name: Set VERSION env
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          VERSION="${BRANCH_NAME//release\//v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Prepare Debian package folder
         run: |
           PKGDIR=simeis-server_${{ env.VERSION }}
