@@ -113,8 +113,7 @@ jobs:
           Serveur API Rust Simeis.
           EOF
 
-          # 3️⃣ Script DEBIAN/postinst
-          cat <<'EOF' > $PKGDIR/DEBIAN/postinst
+                  cat <<'EOF' > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
@@ -128,10 +127,9 @@ jobs:
 
           exit 0
           EOF
-          chmod 0755 $PKGDIR/DEBIAN/postinst
+                  chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          # 4️⃣ Fichier systemd service
-          cat <<EOF > $PKGDIR/etc/systemd/system/simeis.service
+                  cat <<EOF > $PKGDIR/etc/systemd/system/simeis.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
@@ -148,12 +146,12 @@ jobs:
           EOF
 
       - name: Build Debian package
-        run: sudo apt install ./simeis-server_${{ env.VERSION }}.deb
+        run: |
+          dpkg-deb --build simeis-server_${{ env.VERSION }}
+          ls -lh simeis-server_${{ env.VERSION }}.deb
 
       - name: Upload .deb as artifact
         uses: actions/upload-artifact@v4
         with:
           name: simeis-server_${{ env.VERSION }}.deb
           path: simeis-server_${{ env.VERSION }}.deb
-
-
