@@ -36,11 +36,11 @@ touch /var/log/simeis-server.err.log /var/log/simeis-server.out.log
 chown $USER:$USER /var/log/simeis-server.*.log
 
 echo "Redémarrage de supervisord pour prendre en compte la nouvelle config..."
-supervisorctl reread
-supervisorctl update
+supervisorctl -c /etc/supervisor/supervisord.conf reread
+supervisorctl -c /etc/supervisor/supervisord.conf update
 
 echo "Démarrage du service simeis-server..."
-supervisorctl start simeis-server
+ supervisorctl -c /etc/supervisor/supervisord.conf start simeis-server
 
 echo "Installation terminée. Status du service :"
-supervisorctl status simeis-server
+supervisorctl -c /etc/supervisor/supervisord.conf status simeis-server
