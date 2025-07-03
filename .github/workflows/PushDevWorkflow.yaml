@@ -2,10 +2,9 @@ name: Changelog Generator
 
 on:
   push:
-    branches: [
-        release/**
-        testRelease/**
-        ]
+    branches: 
+        - release/**
+        - testRelease/**
   workflow_dispatch:
 
 jobs:
