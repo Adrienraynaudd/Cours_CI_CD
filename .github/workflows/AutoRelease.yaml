@@ -15,6 +15,9 @@ jobs:
             - name: Checkout repo
               uses: actions/checkout@v4
             
+            - name : build
+              run : cargo build --release
+
             - name : Put commit hash/name in env variables
               run : |
                 echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
