@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  heavy-testing-dependencies:
-    name: heavy-testing-dependencies
+  heavy-testing:
+    name: heavy-testing
     runs-on: ubuntu-latest
 
     steps:
