@@ -165,7 +165,8 @@ jobs:
           BRANCH_NAME="${GITHUB_REF##*/}"
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "DOCKERHUB_TAG=litchipi/simeisAdrMaxP:${{ env.VERSION }}" >> $GITHUB_ENV
+          DOCKERHUB_TAG="litchipi/simeisadrmaxp:${VERSION}"
+          echo "DOCKERHUB_TAG=$DOCKERHUB_TAG" >> $GITHUB_ENV
 
       - name: Download compiled binary
         uses: actions/download-artifact@v4
