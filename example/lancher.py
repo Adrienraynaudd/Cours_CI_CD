@@ -2,7 +2,7 @@ import subprocess
 import time
 
 # Chemin vers le script Python à exécuter
-script_path = r".\example\client.py"
+script_path = r".\example\newClient\main.py"
 
 # Nombre d'instances à lancer
 num_instances = 6
