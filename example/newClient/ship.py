@@ -1,11 +1,12 @@
 import time
 import asyncio
+import traceback
 
 from commun import get_dist, service, gameData
 from error import SimeisError
 
 max_lvl = {
-    "pilot": 10,
+    "Pilot": 15,
     "ReactorUpgrade": 100,
     "HullUpgrade": 1000,
     "Shield": 5,
@@ -62,15 +63,15 @@ def get_most_profitables(ship_id):
         )
 
         prices = service.get_prices()["prices"]
-        gameData.resources = [(key, value) for key, value in gameData.resources.items()]
+        resources = [(key, value) for key, value in gameData.resources.items()]
         solid_ressources = [
             prices[x[0]] / x[1]["difficulty"] / x[1]["volume"]
-            for x in gameData.resources
+            for x in resources
             if "min-rank" in x[1].keys() and is_resources_solid[x[0]] and x[1]["min-rank"]
         ]
         gaz_ressources = [
             prices[x[0]] / x[1]["difficulty"] / x[1]["volume"]
-            for x in gameData.resources
+            for x in resources
             if "min-rank" in x[1].keys() and not is_resources_solid[x[0]] and x[1]["min-rank"]
         ]
 
@@ -99,6 +100,7 @@ async def run(ship_id):
             if "This player lost the game and cannot play anymore" in str(e):
                 print("!!! Player lost, exiting the game")
                 break
+            print(traceback.format_exc())
             print(f"!!! An error occurred: {e}")
         
     
@@ -191,7 +193,7 @@ def ship_repair(ship_id):
     print(f"[*] Bought {req} of hull plates for", bought["removed_money"])
     repair = service.repair_ship(gameData.station["id"], gameData.ship[ship_id]["data"]["id"])
     print("[*] Repaired {} hull plates on the ship".format(repair["added-hull"]))
-    return bought["removed_money"]
+    return bought["removed_money"] if bought else 0
 
 def ship_refuel(ship_id):
     req = int(gameData.ship[ship_id]["data"]["fuel_tank_capacity"] - gameData.ship[ship_id]["data"]["fuel_tank"])
@@ -202,15 +204,17 @@ def ship_refuel(ship_id):
     print(f"[*] Bought {req} of fuel for", bought["removed_money"])
     refuel = service.refuel_ship(gameData.station["id"], gameData.ship[ship_id]["data"]["id"])
     print("[*] Refilled {} fuel on the ship for {} credits".format(refuel["added-fuel"], bought["removed_money"]))
-    return bought["removed_money"]
+    return bought["removed_money"] if bought else 0
 
 def shopping(ship_id):
     shop_money = (gameData.money - gameData.cost * 60 * 5) * 0.9
     gameData.money -= shop_money
     
+    print(len(gameData.ship), gameData.max_ship, gameData.ship[ship_id]["lvl"])
     if len(gameData.ship) < gameData.max_ship and gameData.ship[ship_id]["lvl"] > 25:
         gameData.new_ship_money += shop_money * 0.1
         shop_money *= 0.9
+        print(f"[*] You have {gameData.new_ship_money} credits for a new ship")
         if gameData.new_ship_money > 100000:
             print("[*] You have enough money to buy a new ship, buying one")
             gameData.new_ship_money -= 100000
