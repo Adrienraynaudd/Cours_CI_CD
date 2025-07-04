@@ -205,6 +205,7 @@ jobs:
       - name: Build and export to Docker
         uses: docker/build-push-action@v6
         with:
+          file: .github/Dockerfile
           load: true
           tags: ${{ env.DOCKERHUB_TAG }}
 
@@ -215,6 +216,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          file: .github/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.DOCKERHUB_TAG }}
