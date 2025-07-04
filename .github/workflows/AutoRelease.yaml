@@ -162,7 +162,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        
+
       - name: Set VERSION env
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
@@ -176,7 +176,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t simeis-server:${{ env.VERSION }} -f .github/Dockerfile .
+          docker build --build-arg VERSION=${{ env.VERSION }} -t simeis-server:${{ env.VERSION }} -f .github/Dockerfile .
 
       - name: Save Docker image as artifact
         run: |

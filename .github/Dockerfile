@@ -1,5 +1,7 @@
 FROM debian:bookworm-slim
 
-COPY ./*.deb .
+ARG VERSION
 
-RUN dpkg -i ./*.deb
+COPY ./simeis-server_${VERSION}.deb .
+
+RUN dpkg -i simeis-server_${VERSION}.deb
