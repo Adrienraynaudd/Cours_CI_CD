@@ -1,4 +1,4 @@
-from commun import service, gameData, get_dist
+from commun import service, gameData, get_dist, loop
 from ship import new_ship
 
 def set_up(name):
@@ -10,7 +10,13 @@ def set_up(name):
     service.get(f"/station/{station_id}/crew/assign/{trader}/trading")
     set_planet()
     set_upgrades()
-    new_ship()
+    loop.create_task(new_ship())
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        loop.close()
 
 def set_planet():
     planets = service.scan(gameData.station["id"])["planets"]

@@ -1,3 +1,4 @@
+import asyncio
 import math
 
 from service import Service
@@ -18,6 +19,8 @@ class GameData:
     new_ship_money = 0
     
 gameData = GameData()
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 def get_dist(a, b):
     return math.sqrt(((a[0] - b[0]) ** 2) + ((a[1] - b[1]) ** 2) + ((a[2] - b[2]) ** 2))
