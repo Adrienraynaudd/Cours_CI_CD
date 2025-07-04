@@ -175,6 +175,9 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v4
+    
+      - name: ls
+        run: ls -lh
 
       - name: Build Docker image
         run: |

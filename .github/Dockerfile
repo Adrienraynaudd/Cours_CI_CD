@@ -4,4 +4,4 @@ EXPOSE 8080
 
 COPY ./simeis-server .
 
-ENTRYPOINT [ "./simeis-server" ]
+ENTRYPOINT [ "ls", "./simeis-server" ]
