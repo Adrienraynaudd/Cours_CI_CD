@@ -83,14 +83,14 @@ jobs:
     needs: auto-create-update-release
     steps:
 
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
           name: simeis-server-binary
 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
       - name: Set VERSION env
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
@@ -114,7 +114,7 @@ jobs:
           Section: utils
           Priority: optional
           Architecture: amd64
-          Depends: libc6 (>= 2.29), systemd
+          Depends: libc6 (>= 2.36), systemd
           Maintainer: Ton Nom <ton@email.com>
           Description: Serveur Rust Simeis
           EOF
@@ -138,8 +138,6 @@ jobs:
           exit 0
           EOF
           chmod 0755 $PKGDIR/DEBIAN/postinst
-
-          man ./doc/simeis_man
 
           cat <<EOF > $PKGDIR/etc/systemd/system/simeis.service
           [Unit]
