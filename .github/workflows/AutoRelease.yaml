@@ -157,7 +157,7 @@ jobs:
 
   upload-docker-image:
     runs-on: ubuntu-latest
-    needs: package-deb
+    needs: auto-create-update-release
 
     steps:
       - name: Checkout repo
@@ -169,14 +169,14 @@ jobs:
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v4
+      - name: Download compiled binary
+        uses: actions/download-artifact@v4
         with:
-          name: simeis-server_${{ env.VERSION }}.deb
-          path: simeis-server_${{ env.VERSION }}.deb
+          name: simeis-server-binary
 
       - name: Build Docker image
         run: |
-          docker build --build-arg VERSION=${{ env.VERSION }} -t simeis-server:${{ env.VERSION }} -f .github/Dockerfile .
+          docker build -t simeis-server:${{ env.VERSION }} -f .github/Dockerfile .
 
       - name: Save Docker image as artifact
         run: |
