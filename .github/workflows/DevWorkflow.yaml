@@ -46,3 +46,30 @@ jobs:
 
       - name: run test
         run: cargo test --features testing
+
+  check-pr-name:
+    name: Check Pull Request name
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Pull Request range
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "range=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "range=${{ github.event.before }}..${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Pull Request name format
+        run: |
+          pattern="^[a-z]+\([^)]+\): .+"
+          if ! [[ "${{ github.event.pull_request.title }}" =~ $pattern ]]; then
+            echo "❌ Commit $hash has an invalid message: \"${{ github.event.pull_request.title }}\""
+            exit 1
+          else
+            echo "✅ Commit $hash is valid."
+          fi
