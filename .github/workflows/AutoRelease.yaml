@@ -172,12 +172,20 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: simeis-server-binary
+          path: artifacts
+    
+      - name: ls
+        run: |
+          ls -lh
+          ls -lh artifacts
 
       - name: Checkout repo
         uses: actions/checkout@v4
     
       - name: ls
-        run: ls -lh
+        run: |
+          ls -lh
+          ls -lh artifacts
 
       - name: Build Docker image
         run: |
