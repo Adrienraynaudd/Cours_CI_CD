@@ -160,9 +160,6 @@ jobs:
     needs: auto-create-update-release
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
       - name: Set VERSION env
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
@@ -173,6 +170,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: simeis-server-binary
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: |
