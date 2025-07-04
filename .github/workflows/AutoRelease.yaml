@@ -108,7 +108,7 @@ jobs:
           sudo mv simeis-server $PKGDIR/usr/bin/
           sudo chmod 0755 $PKGDIR/usr/bin/simeis-server
 
-          cat <<EOF > $PKGDIR/DEBIAN/control
+          sudo cat <<EOF > $PKGDIR/DEBIAN/control
           Package: simeis-server
           Version: ${{ env.VERSION }}
           Section: utils
@@ -119,11 +119,11 @@ jobs:
           Description: Serveur Rust Simeis
           EOF
 
-           cat <<EOF > /etc/man/manual
+           sudo cat <<EOF > /etc/man/manual
            ${{ env.MAN }}
            EOF
 
-          cat <<'EOF' > $PKGDIR/DEBIAN/postinst
+          sudo cat <<'EOF' > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
@@ -139,7 +139,7 @@ jobs:
           EOF
           chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          cat <<EOF > /etc/systemd/system/simeis.service
+          sudo cat <<EOF > /etc/systemd/system/simeis.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
