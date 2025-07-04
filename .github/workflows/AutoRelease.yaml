@@ -123,7 +123,7 @@ jobs:
            ${{ env.MAN }}
            EOF"
 
-          sudo bash -c "cat <<'EOF' > $PKGDIR/DEBIAN/postinst
+          sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
@@ -137,7 +137,7 @@ jobs:
 
           exit 0
           EOF"
-          chmod 0755 $PKGDIR/DEBIAN/postinst
+          sudo chmod 0755 $PKGDIR/DEBIAN/postinst
 
           sudo bash -c "cat <<EOF > /etc/systemd/system/simeis.service
           [Unit]
