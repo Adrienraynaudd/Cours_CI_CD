@@ -1,3 +1,3 @@
 FROM debian:bookworm-slim
 
-COPY ./simeis-server-binary .
+COPY ./simeis-server .
