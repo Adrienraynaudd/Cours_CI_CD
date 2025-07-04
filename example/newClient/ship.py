@@ -1,9 +1,7 @@
 import time
-import asyncio
 import traceback
 
-from commun import get_dist, service, gameData
-from error import SimeisError
+from commun import get_dist, service, gameData, loop
 
 max_lvl = {
     "Pilot": 15,
@@ -17,7 +15,7 @@ upgrade_priority = [
     "CargoExpansion", "CargoExpansion", "CargoExpansion", "CargoExpansion", "CargoExpansion"
 ]
 
-def new_ship():
+async def new_ship():
     print("[*] Buying a new ship")
     ship_index = len(gameData.ship)
     gameData.ship.append({"data": {}, "planet": False, "lvl": 0})
@@ -34,7 +32,7 @@ def new_ship():
     op = service.hire_crew(station_id, "operator")["id"]
     service.set_crew(station_id, ship, op, mod_id)
     gameData.ship[ship_index]["data"] = service.get_ship(ship)
-    asyncio.run(run(ship_index))
+    run(ship_index)
     
 def get_most_profitables(ship_id):
         is_resources_solid = {
@@ -85,7 +83,7 @@ def get_most_profitables(ship_id):
         )
         gameData.ship[ship_id]["planet"] = solid_value > gaz_value
     
-async def run(ship_id):
+def run(ship_id):
     print("[*] Starting the ship operation")
     while True:
         try:
@@ -218,7 +216,7 @@ def shopping(ship_id):
         if gameData.new_ship_money > 100000:
             print("[*] You have enough money to buy a new ship, buying one")
             gameData.new_ship_money -= 100000
-            new_ship()
+            loop.create_task(new_ship())
             return
     
     has_bought = True
