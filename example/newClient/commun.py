@@ -3,7 +3,11 @@ import math
 
 from service import Service
 
-service = Service("http://127.0.0.1:8080")
+PORT = 8080
+URL = f"http://103.45.247.164:{PORT}"
+# URL = f"http://127.0.0.1:{PORT}"
+
+service = Service(URL)
 
 class GameData:
     resources = service.get_resources()

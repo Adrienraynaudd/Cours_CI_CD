@@ -208,16 +208,16 @@ def shopping(ship_id):
     shop_money = (gameData.money - gameData.cost * 60 * 5) * 0.9
     gameData.money -= shop_money
     
-    print(len(gameData.ship), gameData.max_ship, gameData.ship[ship_id]["lvl"])
-    if len(gameData.ship) < gameData.max_ship and gameData.ship[ship_id]["lvl"] > 25:
-        gameData.new_ship_money += shop_money * 0.1
-        shop_money *= 0.9
-        print(f"[*] You have {gameData.new_ship_money} credits for a new ship")
-        if gameData.new_ship_money > 100000:
-            print("[*] You have enough money to buy a new ship, buying one")
-            gameData.new_ship_money -= 100000
-            loop.create_task(new_ship())
-            return
+    # print(len(gameData.ship), gameData.max_ship, gameData.ship[ship_id]["lvl"])
+    # if len(gameData.ship) < gameData.max_ship and gameData.ship[ship_id]["lvl"] > 25:
+    #     gameData.new_ship_money += shop_money * 0.1
+    #     shop_money *= 0.9
+    #     print(f"[*] You have {gameData.new_ship_money} credits for a new ship")
+    #     if gameData.new_ship_money > 100000:
+    #         print("[*] You have enough money to buy a new ship, buying one")
+    #         gameData.new_ship_money -= 100000
+    #         loop.create_task(new_ship())
+    #         return
     
     has_bought = True
     
