@@ -160,6 +160,9 @@ jobs:
     needs: package-deb
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
       - name: Set VERSION env
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
