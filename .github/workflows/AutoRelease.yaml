@@ -90,7 +90,7 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v4
-        
+
       - name: Set VERSION env
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
@@ -103,7 +103,7 @@ jobs:
       - name: Prepare Debian package folder
         run: |
           PKGDIR=simeis-server_${{ env.VERSION }}
-          mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin $PKGDIR/etc/systemd/system $PKGDIR/etc/man/manual
+          mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
 
           mv simeis-server $PKGDIR/usr/bin/
           chmod 0755 $PKGDIR/usr/bin/simeis-server
@@ -119,7 +119,7 @@ jobs:
           Description: Serveur Rust Simeis
           EOF
 
-           cat <<EOF > $PKGDIR/etc/man/manual
+           cat <<EOF > /etc/man/manual
            ${{ env.MAN }}
            EOF
 
@@ -139,7 +139,7 @@ jobs:
           EOF
           chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          cat <<EOF > $PKGDIR/etc/systemd/system/simeis.service
+          cat <<EOF > /etc/systemd/system/simeis.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
