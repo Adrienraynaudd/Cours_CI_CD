@@ -218,7 +218,9 @@ jobs:
 
       - name: Test
         run: |
-          docker run --rm ${{ env.DOCKERHUB_TAG }}
+          docker run --rm ${{ env.DOCKERHUB_TAG }} &
+          sleep 10
+          kill $(jobs -p)
 
       - name: Build and push
         uses: docker/build-push-action@v6
