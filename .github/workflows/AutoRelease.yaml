@@ -103,7 +103,7 @@ jobs:
       - name: Prepare Debian package folder
         run: |
           PKGDIR=simeis-server_${{ env.VERSION }}
-          mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
+          sudo mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
 
           mv simeis-server $PKGDIR/usr/bin/
           chmod 0755 $PKGDIR/usr/bin/simeis-server
