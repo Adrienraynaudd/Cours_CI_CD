@@ -108,22 +108,22 @@ jobs:
           sudo mv simeis-server $PKGDIR/usr/bin/
           sudo chmod 0755 $PKGDIR/usr/bin/simeis-server
 
-          sudo bash -c 'cat <<EOF > $PKGDIR/DEBIAN/control
+          sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/control
           Package: simeis-server
-          Version: ${{ env.VERSION }}
+          Version: ${VERSION}
           Section: utils
           Priority: optional
           Architecture: amd64
           Depends: libc6 (>= 2.36), systemd
           Maintainer: Ton Nom <ton@email.com>
           Description: Serveur Rust Simeis
-          EOF'
+          EOF"
 
-           sudo bash -c 'cat <<EOF > /etc/man/manual
+           sudo bash -c "cat <<EOF > /etc/man/manual
            ${{ env.MAN }}
-           EOF'
+           EOF"
 
-          sudo bash -c 'cat <<'EOF' > $PKGDIR/DEBIAN/postinst
+          sudo bash -c "cat <<'EOF' > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
@@ -136,10 +136,10 @@ jobs:
           systemctl start simeis.service || true
 
           exit 0
-          EOF'
+          EOF"
           chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          sudo bash -c 'cat <<EOF > /etc/systemd/system/simeis.service
+          sudo bash -c "cat <<EOF > /etc/systemd/system/simeis.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
@@ -153,7 +153,7 @@ jobs:
 
           [Install]
           WantedBy=multi-user.target
-          EOF'
+          EOF"
 
       - name: Build Debian package
         run: |
