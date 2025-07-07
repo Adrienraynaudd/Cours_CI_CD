@@ -117,7 +117,8 @@ jobs:
           User=simeis
           Group=simeis
           ExecStart=/usr/bin/simeis-server_AMP
-          Restart=on-failure
+          Restart=always
+          RestartSec=5
           LimitNOFILE=65536
 
           [Install]
