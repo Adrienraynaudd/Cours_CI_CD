@@ -76,7 +76,7 @@ jobs:
           sudo mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
 
           ls
-          sudo mv simeis-server_AMP $PKGDIR/usr/bin/
+          sudo mv simeis-server_0.24.25 $PKGDIR/usr/bin/
           sudo chmod 0755 $PKGDIR/usr/bin/simeis-server_AMP
 
           sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/control
