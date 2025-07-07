@@ -75,8 +75,8 @@ jobs:
           PKGDIR=simeis-server_${{ env.VERSION }}
           sudo mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
 
-          
-          sudo mv simeis-server $PKGDIR/usr/bin/
+          ls
+          sudo mv simeis-server_AMP $PKGDIR/usr/bin/
           sudo chmod 0755 $PKGDIR/usr/bin/simeis-server_AMP
 
           sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/control
