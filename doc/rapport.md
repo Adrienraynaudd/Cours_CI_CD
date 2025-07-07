@@ -58,11 +58,25 @@ L'API est composer de deux dossiers principaux :
 ```
 
 
+## Travail des développeurs
+### Mise en cache  
+Pour optimiser les performances des workflows, un cache est mis en place pour les dependaces et les builds :    
+- **Les dependances cargo**  
+- **Le build CMake**  
+- **Le build cargo**  
+- **Les dependances python**  
 
-## Workflow développement
+Voilà un schema récapitulatif du fonctionnement du cache :
 
+![Cache](../Img_Rapport/Fonctionnement_Cache.png "Fonctionnement du cache")
+
+
+### Workflow développement
 Pour optimiser la CI plusieurs workflows ont été mis en place :
-- `dependabot` :  Le workflow dependabot permet de mettre à jour les dépendances du projet automatiquement, à minuit, tous les jours.
+- `dependabot` :  Le workflow dependabot permet de mettre à jour les dépendances du projet automatiquement, à minuit, tous les jours.  
+
+
+![Dependabot](../Img_Rapport/Dependabot.png "Dependabot")
 - `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il va lancer tout les tests afin de verifier que le code ajouté sur `main` n'apporte pas de problemes au projet.
 - `matrice-check` :  Lors d'une pull request sur `main`, si la branche source commence par `feature/`, ce workflow va tester si le projet fonctionne sur different systemes d'exploitation (Linux, MacOS, Windows) mais aussi sur differente version de Rust.
 - `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.
@@ -82,7 +96,8 @@ Pour optimiser la CI plusieurs workflows ont été mis en place :
     
     **Verification des TODO** :  
     - Verifie que les TODO et les FIXME sont bien lié a une issue  
-    
+
+
 
 
 ### Prépartion des releases  
@@ -95,7 +110,11 @@ Il va lancer plusieurs Jobs :
 - **check-dep** :  
         Ici on va verifier que toutes les dépendances sont utilisées dans le projet.  
 - **functional-tests** :  
-        Ce job va executer les tests fonctionnels du projet.
+        Ce job va executer les tests fonctionnels du projet c'est a dire des scenarios utilisateur.  
+        Un premier viens tester le fonctionnement du trajet. Il va verifier que la postition change lorsque le vaisseau se déplace.  
+        Un second va tester le fonctionnement de l'amelioration d'un membre de l'équipage.  
+        Enfin un dernier va tester plusieurs fonctionnalités. L'achat et l'assignation d'un pilote a un vaisseau. L'achat de modules pour un vaisseau. L'achat et l'assignation d'un operator.  
+        Grace a ces tests, on s'assure que les fonctionnalités principales du jeu sont fonctionnelles.
 - **coverage** :  
         Le job coverage va verifier que les tests couvrent au moins 50 % du code.
 - **verificationSource** :  
@@ -103,4 +122,5 @@ Il va lancer plusieurs Jobs :
 ### Déploiement des releases   
 `auto-release` : Ce workflow est executé lorsqu'on push sur `release/*`. Avec le job `auto-create-update-release`, la branche release est créée avec le tag de la nouvelle version. Si la version de la release existe deja , le workflow va mettre à jour la release existante.   
 Ensuite le job `package-deb` recupere le binaire puis créé un package debian pour executer le serveur sur Linux enfin le job renoie l'artefact.
+## Lancement du projet
 ## Retour d'expérience
