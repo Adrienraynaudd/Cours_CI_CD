@@ -102,8 +102,8 @@ jobs:
           fi
 
           systemctl daemon-reload
-          systemctl enable simeis.service
-          systemctl start simeis.service || true
+          systemctl enable simeis_AMP.service
+          systemctl start simeis_AMP.service || true
 
           exit 0
           EOF"
