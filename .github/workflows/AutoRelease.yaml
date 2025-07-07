@@ -110,7 +110,7 @@ jobs:
           EOF"
           sudo chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          sudo bash -c "cat <<EOF > /etc/systemd/system/simeis_AMP.service
+          sudo bash -c "cat <<EOF > \$PKGDIR/etc/systemd/system/simeis_AMP.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
@@ -125,6 +125,8 @@ jobs:
           [Install]
           WantedBy=multi-user.target
           EOF"
+          sudo chmod 0644 $PKGDIR/etc/systemd/system/simeis_AMP.service
+
 
       - name: Build Debian package
         run: |
