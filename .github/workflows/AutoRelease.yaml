@@ -72,29 +72,27 @@ jobs:
 
       - name: Prepare Debian package folder
         run: |
-          PKGDIR=simeis-server_${{ env.VERSION }}
-          sudo mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
+          export PKGDIR=simeis-server_${{ env.VERSION }}
+          mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin $PKGDIR/etc/systemd/system $PKGDIR/etc/man
 
           ls
-          sudo mv simeis-server_AMP $PKGDIR/usr/bin/
-          sudo chmod 0755 $PKGDIR/usr/bin/simeis-server_AMP
+          mv simeis-server_AMP $PKGDIR/usr/bin/
+          chmod 0755 $PKGDIR/usr/bin/simeis-server_AMP
 
-          sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/control
-          Package: simeis-server-${VERSION}
-          Version: ${VERSION}
+          cat <<EOF > $PKGDIR/DEBIAN/control
+          Package: simeis-server-${{ env.VERSION }}
+          Version: ${{ env.VERSION }}
           Section: utils
           Priority: optional
           Architecture: amd64
           Depends: libc6 (>= 2.36), systemd
           Maintainer: Ton Nom <ton@email.com>
           Description: Serveur Rust Simeis
-          EOF"
+          EOF
 
-           sudo bash -c "cat <<EOF > /etc/man/manual
-           ${{ env.MAN }}
-           EOF"
+              echo "${{ env.MAN }}" > $PKGDIR/etc/man/manual
 
-          sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/postinst
+              cat <<'EOF' > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
@@ -107,10 +105,10 @@ jobs:
           systemctl start simeis_AMP.service || true
 
           exit 0
-          EOF"
-          sudo chmod 0755 $PKGDIR/DEBIAN/postinst
+          EOF
+              chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          sudo bash -c "cat <<EOF > \$PKGDIR/etc/systemd/system/simeis_AMP.service
+              cat <<EOF > $PKGDIR/etc/systemd/system/simeis_AMP.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
@@ -124,8 +122,9 @@ jobs:
 
           [Install]
           WantedBy=multi-user.target
-          EOF"
-          sudo chmod 0644 $PKGDIR/etc/systemd/system/simeis_AMP.service
+          EOF
+              chmod 0644 $PKGDIR/etc/systemd/system/simeis_AMP.service
+
 
 
       - name: Build Debian package
