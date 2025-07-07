@@ -275,6 +275,7 @@ jobs:
   
   deploy:
     runs-on: ubuntu-latest
+    needs: [upload-binaries, package-deb]
 
     steps:
       - name: Checkout repo
