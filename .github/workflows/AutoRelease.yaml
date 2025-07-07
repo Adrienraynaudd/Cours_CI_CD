@@ -296,7 +296,7 @@ jobs:
       - name: call_version
         env:
           SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
-        run: |
+        run: | 
           VERSION=$(grep '^version =' Cargo.toml | head -1 | cut -d '"' -f2)
           VERSION_SERVER=$(curl -s $SERVER_URL/version)
           echo "version_server=$VERSION_SERVER" >> $GITHUB_OUTPUT
