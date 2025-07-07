@@ -206,6 +206,9 @@ jobs:
     needs: [upload-binaries, package-deb, upload-docker-image]
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
