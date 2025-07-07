@@ -1069,12 +1069,18 @@ async fn gamestats(srv: GameState) -> impl web::Responder {
     build_response(Ok(to_value(data).unwrap()))
 }
 
-// TODO (#18) IMPORTANT   FIXME    After a while, hangs without response
+#[web::get("/version")]
+async fn get_version() -> impl web::Responder {
+    let v = env!("CARGO_PKG_VERSION");
+    build_response(Ok(json!({"version": v})))
+}
+
 pub fn configure(srv: &mut ServiceConfig) {
     #[cfg(feature = "testing")]
     srv.service(tick_server).service(tick_server_n);
 
     srv.service(ping)
+        .service(get_version)
         .service(gamestats)
         .service(resources_info)
         .service(get_syslogs)
