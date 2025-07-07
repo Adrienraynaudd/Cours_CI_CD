@@ -312,4 +312,4 @@ jobs:
 
       - name: Se connecter et exécuter une commande sur le serveur
         run: |
-          ssh -i $PKGDIR/id_rsa student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
+          sudo ssh -i $PKGDIR/id_rsa student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
