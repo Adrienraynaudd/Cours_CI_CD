@@ -301,7 +301,7 @@ jobs:
           VERSION_SERVER=$(curl -s $SERVER_URL/version)
           echo "version_server=$VERSION_SERVER" >> $GITHUB_OUTPUT
 
-      - name: Comparer versions
+      - name: Compare_versions
         run: |
           echo "Version Cargo.toml: ${{ steps.extract_version.outputs.version_cargo }}"
           echo "Version serveur: ${{ steps.get_server_version.outputs.version_server }}"
@@ -311,7 +311,7 @@ jobs:
             exit 1
           fi
 
-      - name: congigur_SSHKEY
+      - name: set_SSHKEY
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
