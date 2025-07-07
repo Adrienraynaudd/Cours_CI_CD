@@ -306,10 +306,10 @@ jobs:
 
       - name: Configurer la clé SSH
         run: |
-          cat <<EOF > $PKGDIR/id_rsa
-          ${{ secrets.SSH_KEY }}
-          EOF
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Se connecter et exécuter une commande sur le serveur
         run: |
-          sudo ssh -i $PKGDIR/id_rsa student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
