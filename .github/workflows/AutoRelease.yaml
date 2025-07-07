@@ -240,13 +240,11 @@ jobs:
           VERSION="${BRANCH_NAME//release\//}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - run: ls artifacts
-
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "${{ env.VERSION }}"
+          tag: "v${{ env.VERSION }}"
           prerelease: true
           name: "Latest Commit, that compiles"
           body: |
