@@ -1,6 +1,6 @@
 PORT=8080
-# URL=f"http://0.0.0.0:{PORT}"
 URL=f"http://103.45.247.164:{PORT}"
+# URL = f"http://127.0.0.1:{PORT}"
 
 import os
 import json
@@ -40,7 +40,7 @@ def get(path):
     qry = f"{URL}/{path}"
     while True:
         try:
-            reply = urllib.request.urlopen(qry, timeout=5)
+            reply = urllib.request.urlopen(qry, timeout=60)
             break
         except:
             os.system("clear")
