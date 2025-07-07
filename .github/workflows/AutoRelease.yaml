@@ -281,6 +281,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Set VERSION env
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          VERSION="${BRANCH_NAME//release\//v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
