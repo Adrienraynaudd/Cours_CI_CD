@@ -208,7 +208,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        
+
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
@@ -239,6 +239,8 @@ jobs:
           BRANCH_NAME="${{ github.ref_name }}"
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - run: ls artifacts
 
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
