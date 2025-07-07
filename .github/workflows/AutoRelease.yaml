@@ -313,10 +313,8 @@ jobs:
       - name: Se connecter et exécuter une commande sur le serveur
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "echo 'Connexion réussie!' && uptime"
-
-      - name: Déployer le binaire sur le serveur
-        run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${{ env.VERSION }}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
+
