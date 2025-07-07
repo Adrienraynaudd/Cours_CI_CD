@@ -79,7 +79,7 @@ jobs:
           sudo chmod 0755 $PKGDIR/usr/bin/simeis-server
 
           sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/control
-          Package: simeis-server
+          Package: simeis-server-${VERSION}
           Version: ${VERSION}
           Section: utils
           Priority: optional
