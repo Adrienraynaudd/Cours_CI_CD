@@ -324,5 +324,5 @@ jobs:
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${{ env.VERSION }}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
-          apt install ./simeis-server_${{ env.VERSION }}.deb
+          sudo apt install ./simeis-server_${{ env.VERSION }}.deb
 
