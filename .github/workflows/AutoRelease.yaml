@@ -304,8 +304,12 @@ jobs:
             exit 1
           fi
 
-
+      - name: Configurer la clé SSH
+        run: |
+          cat <<EOF > $PKGDIR/id_rsa
+          ${{ secrets.SSH_KEY }}
+          EOF
 
       - name: Se connecter et exécuter une commande sur le serveur
         run: |
-          ssh -i ${{ secrets.SSH_KEY }} student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
+          ssh -i $PKGDIR/id_rsa student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
