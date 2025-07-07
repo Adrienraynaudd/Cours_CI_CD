@@ -6,7 +6,7 @@ on:
       - "release/**"
 
 jobs:
-  auto-create-update-release:
+  upload-binaries:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,39 +48,9 @@ jobs:
           name: simeis-server-binary
           path: target/release/simeis-server
 
-      - name: Put commit hash/name in env variables
-        run: |
-          echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
-          echo "GIT_MESSAGE<<EOF" >> $GITHUB_ENV 
-          git log -1 --pretty=%B >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Get version from branch name
-        run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          VERSION="${BRANCH_NAME//release\//v}"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Release the new binaries
-        uses: mini-bomba/create-github-release@v1.1.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "${{ env.VERSION }}"
-          prerelease: true
-          name: "Latest Commit, that compiles"
-          body: |
-            This automatic prerelease is built from commit ${{ env.GIT_HASH }} and was triggered by @${{ github.actor }}
-            [Github Actions workflow run that built this prerelease](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-            Commit message:
-            ${{ env.GIT_MESSAGE }}
-          files: |
-            target/release/simeis-server
-          clear_attachments: true
-
   package-deb:
     runs-on: ubuntu-latest
-    needs: auto-create-update-release
+    needs: upload-binaries
     steps:
 
       - name: Download compiled binary
@@ -165,3 +135,137 @@ jobs:
         with:
           name: simeis-server_${{ env.VERSION }}.deb
           path: simeis-server_${{ env.VERSION }}.deb
+
+  upload-docker-image:
+    runs-on: ubuntu-latest
+    needs: upload-binaries
+
+    steps:
+      - name: Set VERSION env
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          VERSION="${BRANCH_NAME//release\//v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          DOCKERHUB_TAG="litchipi/simeisadrmaxp:${VERSION}"
+          echo "DOCKERHUB_TAG=$DOCKERHUB_TAG" >> $GITHUB_ENV
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download compiled binary
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server-binary
+          path: artifacts
+    
+      - name: ls
+        run: |
+          ls -lh
+          ls -lh artifacts
+
+      - name: Build Docker image
+        run: |
+          docker build -t simeis-server:${{ env.VERSION }} -f .github/Dockerfile .
+
+      - name: Save Docker image as artifact
+        run: |
+          docker save simeis-server:${{ env.VERSION }} | gzip > simeis-server_${{ env.VERSION }}.tar.gz
+      
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: simeis-server_${{ env.VERSION }}.tar.gz
+          path: simeis-server_${{ env.VERSION }}.tar.gz
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: litchipi
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .github/Dockerfile
+          load: true
+          tags: ${{ env.DOCKERHUB_TAG }}
+
+      - name: Test
+        run: |
+          docker run --rm ${{ env.DOCKERHUB_TAG }} &
+          sleep 10
+          kill $(jobs -p)
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .github/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.DOCKERHUB_TAG }}
+
+  upload-release:
+    runs-on: ubuntu-latest
+    needs: [upload-binaries, package-deb, upload-docker-image]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download compiled binary
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server-binary
+          path: artifacts
+
+      - name: Download debian
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server_0.42.532.deb
+          path: artifacts
+
+      - name: Download docker
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server_0.42.532.tar.gz
+          path: artifacts
+
+      - name: Put commit hash/name in env variables
+        run: |
+          echo "GIT_HASH=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+          echo "GIT_MESSAGE<<EOF" >> $GITHUB_ENV 
+          git log -1 --pretty=%B >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Get version from branch name
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          VERSION="${BRANCH_NAME//release\//}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Release the new binaries
+        uses: mini-bomba/create-github-release@v1.1.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "v${{ env.VERSION }}"
+          prerelease: true
+          name: "Latest Commit, that compiles"
+          body: |
+            This automatic prerelease is built from commit ${{ env.GIT_HASH }} and was triggered by @${{ github.actor }}
+            [Github Actions workflow run that built this prerelease](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            Commit message:
+            ${{ env.GIT_MESSAGE }}
+          files: |
+            artifacts/simeis-server
+            artifacts/simeis-server_${{ env.VERSION }}.deb
+            artifacts/simeis-server_${{ env.VERSION }}.tar.gz
+          clear_attachments: true
