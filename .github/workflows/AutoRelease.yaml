@@ -117,7 +117,7 @@ jobs:
           [Service]
           User=simeis
           Group=simeis
-          ExecStart=/usr/bin/simeis-server
+          ExecStart=/usr/bin/simeis-server_AMP
           Restart=on-failure
           LimitNOFILE=65536
 

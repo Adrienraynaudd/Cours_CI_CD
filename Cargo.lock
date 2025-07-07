@@ -1081,7 +1081,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "simeis-server"
+name = "simeis-server_AMP"
 version = "6.1.4"
 dependencies = [
  "base64",
