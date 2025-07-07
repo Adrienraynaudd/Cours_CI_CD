@@ -287,6 +287,8 @@ jobs:
           name: simeis-server-binary
 
       - name: Appeler l’endpoint /version
+        env:
+          SERVER_URL: ${{ secrets.SERVER_URL }}
         run: |
           VERSION=$(grep '^version =' Cargo.toml | head -1 | cut -d '"' -f2)
           VERSION_SERVER=$(curl -s $SERVER_URL/version)
