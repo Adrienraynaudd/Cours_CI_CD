@@ -291,7 +291,7 @@ jobs:
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
-          name: simeis-server-binary
+          name: simeis-server_${{ env.VERSION }}.deb
 
       - name: Appeler l’endpoint /version
         env:
