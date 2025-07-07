@@ -272,3 +272,40 @@ jobs:
             artifacts/simeis-server_${{ env.VERSION }}.deb
             artifacts/simeis-server_${{ env.VERSION }}.tar.gz
           clear_attachments: true
+  
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download compiled binary
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server-binary
+
+      - name: Appeler l’endpoint /version
+        run: |
+          VERSION=$(grep '^version =' Cargo.toml | head -1 | cut -d '"' -f2)
+          VERSION_SERVER=$(curl -s $SERVER_URL/version)
+          echo "version_server=$VERSION_SERVER" >> $GITHUB_OUTPUT
+
+      - name: Comparer versions
+        run: |
+          echo "Version Cargo.toml: ${{ steps.extract_version.outputs.version_cargo }}"
+          echo "Version serveur: ${{ steps.get_server_version.outputs.version_server }}"
+
+          if [ "${{ steps.extract_version.outputs.version_cargo }}" != "${{ steps.get_server_version.outputs.version_server }}" ]; then
+            echo "❌ Versions différentes, déploiement invalide."
+            exit 1
+          fi
+
+      - name: Configurer la clé SSH
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Se connecter et exécuter une commande sur le serveur
+        run: |
+          ssh -i id_rsa student@103.45.247.164 "echo 'Connexion réussie!' && uptime"
