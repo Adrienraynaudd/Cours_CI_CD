@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: simeis-server-binary
-          path: target/release/simeis-server
+          path: target/release/simeis-server_AMP
 
   package-deb:
     runs-on: ubuntu-latest
