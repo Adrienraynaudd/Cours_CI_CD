@@ -109,7 +109,7 @@ jobs:
           EOF"
           sudo chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          sudo bash -c "cat <<EOF > /etc/systemd/system/simeis.service
+          sudo bash -c "cat <<EOF > /etc/systemd/system/simeis${{ env.VERSION }}.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
