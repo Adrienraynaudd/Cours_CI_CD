@@ -293,6 +293,21 @@ jobs:
         with:
           name: simeis-server_${{ env.VERSION }}.deb
 
+      - name: set_SSHKEY
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Se connecter et exécuter une commande sur le serveur
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "echo 'Connexion réussie!' && uptime"
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          VERSION="${BRANCH_NAME//release\//v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${{ env.VERSION }}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
+          sudo apt install ./simeis-server_${{ env.VERSION }}.deb
+
       - name: call_version
         env:
           SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
@@ -310,19 +325,4 @@ jobs:
             echo "❌ Versions différentes, déploiement invalide."
             exit 1
           fi
-
-      - name: set_SSHKEY
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      - name: Se connecter et exécuter une commande sur le serveur
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "echo 'Connexion réussie!' && uptime"
-          BRANCH_NAME="${GITHUB_REF##*/}"
-          VERSION="${BRANCH_NAME//release\//v}"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${{ env.VERSION }}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
-          sudo apt install ./simeis-server_${{ env.VERSION }}.deb
 
