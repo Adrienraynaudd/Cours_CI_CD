@@ -103,7 +103,7 @@ jobs:
 
           # S'assurer que l'utilisateur simeis_AMP peut lire le binaire
           chown root:simeis_AMP /usr/bin/simeis-server_AMP
-          chmod 755 /usr/bin/simeis-server_AMP
+          chmod 755 /usr/bin/simeis-server_AMP 
 
           # Recharger systemd et démarrer le service
           systemctl daemon-reload
