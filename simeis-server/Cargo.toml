@@ -1,6 +1,6 @@
 [package]
 name = "simeis-server_AMP"
-version = "6.1.4"
+version = "6.1.5"
 edition = "2021"
 
 [dependencies]
