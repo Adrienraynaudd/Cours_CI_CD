@@ -311,7 +311,8 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "\
             sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb && \
-            nohup simeis-server >/dev/null 2>&1 &"
+            setsid nohup simeis-server >/dev/null 2>&1 < /dev/null &"
+
 
       - name: call_version
         env:
