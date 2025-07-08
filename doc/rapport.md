@@ -9,6 +9,17 @@ empire économique dans toute la galaxie.
 
 Dans ce jeu, vous devez gérer votre flotte de vaisseaux miniers. Pour cela, vous pouvez acheter des vaisseaux et leur affecter un équipage. Ensuite, vous pouvez les envoyer sur différentes planètes afin de récupérer les ressources disponibles. Après quoi, elles peuvent être transférées à la station pour pouvoir les vendre. Vous pouvez également améliorer votre station ainsi que vos vaisseaux ou membre d'équipage afin de produire plus, stocker plus et vendre plus pour optimiser votre empire. Plus de détails sont disponibles dans le [manuel du jeu](./manual.pdf).
 
+### Les contraintes
+
+Le serveur gère une partie en multijeur ce qui inclue les contraintes suivantes :
+
+- Le serveur doit être capable de gérer plusieurs joueurs en même temps.
+- Le serveur doit être capable de gérer d'importantes quantités de requetes.
+- Le serveur doit être capable de gérer des parties de plusieurs heures.
+- Le serveur ce doit de ne pas avantager certains joueurs par rapport à d'autres.
+
+Le server doit également permettre de lancer une partie rapidement.
+
 ### technologie
 
 Le projet est développé en Rust et build avec Cargo.
@@ -21,49 +32,51 @@ La variante debug est également disponible via la commande `cargo build`, le bi
 ### Architecture
 
 L'API est composer de deux dossiers principaux :
+
 - `simeis-data` : contient les modèles de données ainsi que les fonctions métier.
 - `simeis-api` : contient les routes de l'API ainsi que la configuration
 
-```bash
-├── simeis-data
-│   ├── src
-│   │   ├── galaxy
-│   │   │   ├── planet.rs
-│   │   │   ├── scan.rs
-│   │   │   └── station.rs
-│   │   ├── ship
-│   │   │   ├── cargo.rs
-│   │   │   ├── module.rs
-│   │   │   ├── navigation.rs
-│   │   │   ├── resource.rs
-│   │   │   ├── shipstats.rs
-│   │   │   └── upgrade.rs
-│   │   ├── crew.rs
-│   │   ├── error.rs
-│   │   ├── galaxy.rs
-│   │   ├── game.rs
-│   │   ├── lib.rs
-│   │   ├── market.rs
-│   │   ├── player.rs
-│   │   ├── ship.rs
-│   │   ├── syslog.rs
-│   │   └── tests.rs
-│   └── Cargo.toml
-├── simeis-api
-│   ├── src
-│   │   ├── api.rs
-│   │   └── main.rs
-│   └── Cargo.toml
-└── Cargo.toml
+```tree
+simeis-data
+ ├── src
+ │    ├── galaxy
+ │    │    ├── planet.rs
+ │    │    ├── scan.rs
+ │    │    └── station.rs
+ │    ├── ship
+ │    │    ├── cargo.rs
+ │    │    ├── module.rs
+ │    │    ├── navigation.rs
+ │    │    ├── resource.rs
+ │    │    ├── shipstats.rs
+ │    │    └── upgrade.rs
+ │    ├── crew.rs
+ │    ├── error.rs
+ │    ├── galaxy.rs
+ │    ├── game.rs
+ │    ├── lib.rs
+ │    ├── market.rs
+ │    ├── player.rs
+ │    ├── ship.rs
+ │    ├── syslog.rs
+ │    └── tests.rs
+ └── Cargo.toml
+simeis-api
+ ├── src
+ │    ├── api.rs
+ │    └── main.rs
+ └── Cargo.toml
+Cargo.toml
 ```
-
 
 ### Le workflow de travail
 
 La branche `main` est la branche de développement du projet. C'est sur cette branche que les développeurs travaillent et ajoutent de nouvelles fonctionnalités. Pour chaque changement a apporter, les développeurs créent une nouvelle branche de travail à partir de `main`. Cette branche de travail est nommée en fonction de la fonctionnalité ou du bug à corriger, par exemple `feature/ajout-nouvelle-fonctionnalite` ou `bug/correction-bug`. De cette manière, les développeurs peuvent travailler sur plusieurs fonctionnalités en parallèle sans interférer les uns avec les autres. De plus, on peut facilement connaitre la nature du changement sans ce référer à l'issue associée. Une fois le développement terminé, le développeur crée une pull request vers la branche `main`. Cette pull request est ensuite revue par les autres développeursdu projet (au moins 1 personne dont le 'code owner'). De plus des 'jobs github' sont lancé ce qui nous permet d'éffectué des vérifications sur la qualité du code qui a été ajouter. Si la pull request est approuvée et si les 'jobs github' ont été executé avec succès, elle est fusionnée dans la branche `main`. Si des modifications sont nécessaires, elles sont demandées au développeur et la pull request est mise à jour en conséquence. Une fois tous les développement terminés, une nouvelle version du projet peut etre créée. Pour cela, on crée une nouvelle branche `release/<version>` à partir de `main`. Un commit vide est ajouter sur la branche `main` pour marquer la fin de la version et permettre de créer une nouvelle pull request vers `release/<version>`. De nouveaux 'jobs github' sont lancés pour éffectuer des vérifications supplémentaires sur la qualité du code et la sécurité des dépendances. C'est jobs sont bien plus long car ils poussent plus loin les vérifications, ainsi pour gagné du temps dans les développements, ils ne sont pas lancés à chaque pull request mais uniquement sur les branches de release. Une fois la pull request approuvée et les jobs validées, la pull request est fusionnée dans la branche `release/<version>`. Enfin, un workflow de release est lancé pour créer une nouvelle release du projet. Ce workflow va générer un binaire, un package debian et une image docker du projet. Il va ensuite créer une release sur GitHub avec les artefacts générés. Cette release ne peut plus recevoir de nouvelles fonctionnalités, cepandent elle peut recevoir des correctifs. pour cela, on créer une nouvelle branche `bug/<nom-du-bug>` à partir de la branche `main`. Une fois le correctif apporté, on crée une pull request vers `main` et on ajoute les labels `propagate:release/<version>` pour chaque release corrigée par ce correctif. Une fois la pull request approuvée, un jobs va automatiquement créer une nouvelle pull request vers chaque branche de release pour propager le correctif. De cette manière, on s'assure que les correctifs sont bien propagés sur toutes les versions du projet. La brache `main` ainsi que les branches `bug/<nom-du-bug>` sont les seules branches qui peuvent être déversées dans une branche de release. Cela permet de s'assurer que les branches de release ne contiennent que des correctifs et pas de nouvelles fonctionnalités. De plus, cela permet de s'assurer que les branches de release sont stables et ne contiennent pas de bugs.
 
 ### Mise en cache  
-Pour optimiser les performances des workflows, un cache est mis en place pour les dependaces et les builds :    
+
+Pour optimiser les performances des workflows, un cache est mis en place pour les dependaces et les builds :
+
 - **Les dependances cargo**  
 - **Le build CMake**  
 - **Le build cargo**  
@@ -78,7 +91,6 @@ Le cache est mis en place pour éviter de télécharger les dépendances à chaq
 le cache est identifé par un hash. Celui ci est calculé à partir des fichiers de configuration en fonction de la partie mis en cache (les packages manager pour les dépendances, le code sources pour les builds). Ainsi, si les fichiers de configurations sont modifiés par le développement, le hash ce retrouve modifié et le cache est concidérer invalide. Ainsi, il sera recréé pour permettre l'ajoue de c'est modifications. dans celui-ci.
 
 ![Cache](Img_Rapport/cache.drawio.png "Fonctionnement du cache")
-
 
 Pour optimiser le développement du projet, une CI est mise en place avec GitHub Actions.
 Cette CI va permettre de lancer des vérifications sur le code à chaque pull request, mais aussi de mettre à jour les dépendances du projet automatiquement.
@@ -96,36 +108,58 @@ De plus, elle va permettre de lancer des tests sur le projet pour s'assurer que 
 
 ![Matrice Check](Img_Rapport/Matrice_Check.png "Matrice Check")
 
-- `PR-workflow` :  Ce workflow est executé lors d'une pull request sur les branches `main` ou `release/<version>`. Il va lancer plusieurs verification sur le nouveau code :  
+- `PR-workflow` :  Ce workflow est executé lors d'une pull request sur les branches `main` ou `release/<version>`. Il est composer de plusieurs jobs qui vont venir vérifier la qualité du code ainsi que si les TODO et les FIXME sont bien liés à une issue.
 
 - **Verification Rust/Cargo** :  
   - Verifie que le code peut compiler et si la syntaxe du code est correct grace a `cargo check`
-  ![Cargo Check](Img_Rapport/Cargo_Check.png "Cargo Check")
-  - Verifie que le code respecte les conventions de formattage grace a `cargo fmt--check`  
-  ![Cargo format](Img_Rapport/Cargo_format.png "Cargo format")
-  - Verification de la structure du code, linting, avec `cargo clippy`  
-  ![Cargo Clippy](Img_Rapport/Cargo_clippy.png "Cargo Clippy")
+  
+    ![Cargo Check](Img_Rapport/Cargo_Check.png "Cargo Check")
 
-- **Verification CMake** :  
-  - Verifie que le code peut build correctement grace a `cmake --build . --target check_code`  
-  ![CMake Check](Img_Rapport/CMake_check.png "CMake Check")
-  - Build le code grace a `cmake --build . --target build_simeis`  
-  ![CMake Build](Img_Rapport/CMake_build.png "CMake Build")
-  - Genere la documentation grace a `cmake --build . --target build_manual`  
-  ![CMake Documentation](Img_Rapport/CMake_build_doc.png "CMake Documentation")
-  - Execute les tests grace a `cmake --build . --target run_tests`  
-  ![CMake Tests](Img_Rapport/CMake_tests.png "CMake Tests")
-  - Nettoie les fichiers de build grace a `cmake --build . --target clean_dev`  
-  ![CMake Clean](Img_Rapport/CMake_build_clean.png "CMake Clean")  
+  - Verifie que le code respecte les conventions de formattage (saut de ligne, espace) grace a `cargo fmt--check`  
+
+    ![Cargo format](Img_Rapport/Cargo_format.png "Cargo format")
+
+  - Verification du linting, il s'agit de le structure avancé du code, et de sa qualité. On y retrouve les vérification de :
+    - les variables inutilisées
+    - les fonctions inutilisées
+    - les imports inutilisés
+    - les variables non initialisées
+    - le nom des variables et des fonctions
+    - les types de variables
+  c'est vérification sont permises grace a l'outil `cargo clippy`.
+
+    ![Cargo Clippy](Img_Rapport/Cargo_clippy.png "Cargo Clippy")
+
+- **Verification CMake** :
+  Cmake est un outil de build qui permet de générer des fichiers de configuration pour différents système de build.
+
+  - On vérifie que le code peut compiler et que la syntaxe du code est correct avec le build de Cmake.
+
+    ![CMake Check](Img_Rapport/CMake_check.png "CMake Check")
+
+  - On vérifie que le projet peut être construit et lancé avec Cmake.
+
+    ![CMake Build](Img_Rapport/CMake_build.png "CMake Build")
+
+  - On vérifie que le manuel de l'API est bien généré avec Cmake.
+
+    ![CMake Documentation](Img_Rapport/CMake_build_doc.png "CMake Documentation")
+
+  - On vérifie que les tests sont bien lancés avec CMake.
+
+    ![CMake Tests](Img_Rapport/CMake_tests.png "CMake Tests")
+
 - **Verification des TODO** :  
-  - Verifie que les TODO et les FIXME sont bien lié a une issue  
-  ![Check TODO](Img_Rapport/Todo_check.png "Check TODO")
 
+  - Verifie que les TODO et les FIXME sont bien lié a une issue. Les TODO et FIXME sont des commentaires dans le code qui permettent de signaler des tâches à accomplir ou des bugs à corriger. Il est important de s'assurer que ces TODO et FIXME sont bien liés à une issue pour éviter de laisser des tâches non accomplies ou des bugs non corrigés. Pour cela, on utilise un script qui va parcourir l'enssemble du code et vérifier que chaque TODO et FIXME est bien lié à une issue. Si ce n'est pas le cas, on renvoie un message d'erreur.
 
+    ![Check TODO](Img_Rapport/Todo_check.png "Check TODO")
 
 ### Prépartion des releases  
+
 `release-workflow` : release-workflow est executé lors d'une pull request sur `release/*`.  
 Il va lancer plusieurs Jobs :  
+
 - **heavy-testing** :  
   Ce job va lancer les tests sur le projet pour verifier que toute les fonctionnalitées sont bien fonctionnelles. De plus les "proprety-based tests" sont lancé en bien plusgrand nombre afin de couvrir un maximum de cas possibles.
 
@@ -160,9 +194,9 @@ Il va lancer plusieurs Jobs :
 
   ![verification de la source](Img_Rapport/verification.release.drawio.png "verification de la source")
   
-- `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.  
+- `propagate-workflow` : Lorsqu'une pull request est validé et fusionnée, si la branche source commence par `bug/`. Ce workflow va récupérer les labels au format `propagate:release/<version>`. Pour chaque label trouvé, il va créer une nouvelle pull request vers la branche de release correspondante afin de propager les changements apportés par le correctif.
 
-![Propagate Workflow](Img_Rapport\Propagate_worflow.png "Propagate Workflow")
+  ![Propagate Workflow](Img_Rapport\Propagate_worflow.png "Propagate Workflow")
 
 ### Déploiement des releases
 
@@ -197,5 +231,5 @@ l'ensemble des jobs ne ce lance pas en même temps car certains dépendent d'aut
 
 ![Ordre de lancement des jobs](Img_Rapport/ordre_auto_release.drawio.png "Ordre de lancement des jobs")
 
-## Lancement du projet
 ## Retour d'expérience
+
