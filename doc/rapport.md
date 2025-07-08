@@ -68,15 +68,15 @@ Pour optimiser les performances des workflows, un cache est mis en place pour le
 
 Voilà un schema récapitulatif du fonctionnement du cache :
 
-![Cache](../Img_Rapport/Fonctionnement_Cache.png "Fonctionnement du cache")
+![Cache](Img_Rapport/Fonctionnement_Cache.png "Fonctionnement du cache")
 
 
 ### Workflow développement
 Pour optimiser la CI plusieurs workflows ont été mis en place :
 - `dependabot` :  Le workflow dependabot permet de mettre à jour les dépendances du projet automatiquement, à minuit, tous les jours.  
 
+![Dependabot](Img_Rapport/Dependabot.png "Dependabot")
 
-![Dependabot](../Img_Rapport/Dependabot.png "Dependabot")
 - `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il va lancer tout les tests afin de verifier que le code ajouté sur `main` n'apporte pas de problemes au projet.
 - `matrice-check` :  Lors d'une pull request sur `main`, si la branche source commence par `feature/`, ce workflow va tester si le projet fonctionne sur different systemes d'exploitation (Linux, MacOS, Windows) mais aussi sur differente version de Rust.
 - `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.
@@ -104,23 +104,71 @@ Pour optimiser la CI plusieurs workflows ont été mis en place :
 `release-workflow` : release-workflow est executé lors d'une pull request sur `release/*`.  
 Il va lancer plusieurs Jobs :  
 - **heavy-testing** :  
-        Ce job va lancer les tests sur le projet pour verifier que toute les fonctionnalitées sont bien fonctionnelles.  
+  Ce job va lancer les tests sur le projet pour verifier que toute les fonctionnalitées sont bien fonctionnelles. De plus les "proprety-based tests" sont lancé en bien plusgrand nombre afin de couvrir un maximum de cas possibles.
+
+![heavy_testing](<Img_Rapport/heavy testing.drawio.png> "heavy_testing")
+
 - **cargo-audit** :  
-        Cargo-audit va venir verifier que les dépendances du projet ne contiennent pas de vulnérabilités.  
+  Ce jobs va venir verifier que les dépendances du projet ne contiennent pas de vulnérabilités connues. Pour cela on utilise la commande `cargo audit` qui va analyser les dépendances du projet et renvoyer un rapport des vulnérabilités trouvées. Si une quelconque vulnérabilité est trouvée (même si elle est mineure), nous renvoyons une erreur. Cela nous permet de nous assurer que le projet ne contient pas de dépendances vulnérables.
+
+![cargo-audit](<Img_Rapport/audit.drawio.png> "cargo-audit")
+
 - **check-dep** :  
-        Ici on va verifier que toutes les dépendances sont utilisées dans le projet.  
+  Ici on va verifier que toutes les dépendances sont utilisées dans le projet. Pour cela on utilise un script bash qui récupère l'nessemble des dépendances déclarer dans lefichier `Cargo.toml` a la racine du projet. Puis pour chaque dépendance trouvée, on va parcourir l'enssemble du projet a la recherche d'un import de cette dépendance. Sila dépendance n'est pas utilisée, on renvoie un message d'erreur.
+
+![vérification des dépendances](Img_Rapport/check_dep.drawio.png "vérification des dépendances")
+
 - **functional-tests** :  
-        Ce job va executer les tests fonctionnels du projet c'est a dire des scenarios utilisateur.  
-        Un premier viens tester le fonctionnement du trajet. Il va verifier que la postition change lorsque le vaisseau se déplace.  
-        Un second va tester le fonctionnement de l'amelioration d'un membre de l'équipage.  
-        Enfin un dernier va tester plusieurs fonctionnalités. L'achat et l'assignation d'un pilote a un vaisseau. L'achat de modules pour un vaisseau. L'achat et l'assignation d'un operator.  
-        Grace a ces tests, on s'assure que les fonctionnalités principales du jeu sont fonctionnelles.
+  Ce job va executer les tests fonctionnels du projet c'est a dire des scenarios utilisateur.
+  actuelement il y a trois scenarios de test créer :
+  - tester si un nouveau joueur peut démarrer une partie. Cela consiste a créer un nouveau joueur, acheter un vaisseau et acheter un équipage complet ainsi qu'un module d'excavation (Miner ou Gaz Sucker).
+  - tester le fonctionnement du trajet. Il va verifier que la postition change lorsque le vaisseau se déplace.  
+  - tester le fonctionnement de l'amelioration d'un membre de l'équipage.
+
+  Grace a ces tests, on s'assure que les fonctionnalités principales du jeu sont fonctionnelles.
+
+  ![test fonctionel](Img_Rapport/test-fonc.drawio.png "test fonctionel")
 - **coverage** :  
-        Le job coverage va verifier que les tests couvrent au moins 50 % du code.
+  Ce job va venir verifier que la couverture de code est supérieure à 50%. c'est à dire que les tests execute au moins 50% du code du projet. Cela nous permet de nous assurer que des tests sont bien rédigé pour chaque fonctionnalité du projet. Pour permettre cela, on utilise une librairie Cargo `tarpaulin` qui va venir effectuer une analyse de la couverture du code et renvoyer un rapport de couverture. Ainsi, nous pouvons l'utiliser pour apliquer une vérification que la couverture est bien supérieure à 50%. Si la couverture est inférieure à 50%, on ajoute un label `not enough tests` à la pull request pour signaler le problème.
+
+  ![couverture de test](Img_Rapport/couverture.drawio.png "couverture de test")
 - **verificationSource** :  
-        Ce job verifie que le code source vient soit de la branche `bug/` soit de la branche `main/` pour pouvoir être fusionné dans la branche `release/*`.  
-### Déploiement des releases   
-`auto-release` : Ce workflow est executé lorsqu'on push sur `release/*`. Avec le job `auto-create-update-release`, la branche release est créée avec le tag de la nouvelle version. Si la version de la release existe deja , le workflow va mettre à jour la release existante.   
-Ensuite le job `package-deb` recupere le binaire puis créé un package debian pour executer le serveur sur Linux enfin le job renoie l'artefact.
+  Dans le workflow de release, la nouvelle release ne doit ce base que sur la branche `main`. Une fois la release créée, seul des correctifs peuvent y etre apportés. Pour s'assurer de cela, on verifie que la branche source de la pull request commence par `bug/` ou si il s'agit de la branche `main`. SI ce n'est pas le cas on ferme automatiquement la pull request.
+
+  ![verification de la source](Img_Rapport/verification.release.drawio.png "verification de la source")
+
+### Déploiement des releases
+
+`auto-release` : Ce workflow est executé lorsqu'on push sur une brache qui commance par `release/`. Ce workflow a pour devoir de générer 3 artefacts (un binaire, un package debian et une image docker) et de créer une release sur GitHub. Le workflow est divisé en plusieurs jobs :
+
+- **upload-binaries** :  
+  Ce job va build le projet afin de générer un fichier binaire du serveur. Il va ensuite l'uploader dans les artefacts du workflow.
+
+  ![upload-binaries](Img_Rapport/binaire_art.drawio.png "upload-binaries")
+
+- **package-deb** :
+  Ce job va récupérer le binaire généré par le job précédent et va créer un package debian pour pouvoir exécuter le serveur sur Linux. Il va ensuite uploader le package dansles artefacts du workflow.
+
+  ![package-deb](Img_Rapport/debian_art.drawio.png "package-deb")
+
+- **upload-docker-image** :
+  Ce job va récupérer le binaire généré par le job précédent et va créer une image docker pour pouvoir exécuter le serveur dans un conteneur. Il va ensuite uploader l'imagedans les artefacts du workflow.
+
+  ![upload-docker-image](Img_Rapport/docker_art.drawio.png "upload-docker-image")
+
+- **upload-docker-image-on-dockerhub** :
+  Ce job va récupérer le binaire généré par le job précédent et va créer une image docker pour pouvoir exécuter le serveur dans un conteneur. Il va ensuite tester si l'imagedocker ce lance correctement. Enfin, il va uploader l'image dans docker hub.
+
+  ![upload-docker-image-on-dockerhub](Img_Rapport/docker_dockerhub.drawio.png "upload-docker-image-on-dockerhub")
+
+- **create-release** :
+  Ce job va récupérer l'enssemble des artefacts générés par les jobs précédents. Il va ensuite générer un tag ainsi qu'une release sur github dans le quel il va y ajouterles artefacts.
+
+  ![upload-release](Img_Rapport/auto_release.drawio.png "upload-release")
+
+l'ensemble des jobs ne ce lance pas en même temps car certains dépendent d'autres. En effet les jobs `package-deb`, `upload-docker-image` et `upload-docker-image-on-dockerhub` dépendent du job `upload-binaries` pour pouvoir récupérer le binaire généré. Le job `create-release` dépend de l'ensemble des autres jobs pour pouvoir récupérer les artefacts générés.
+
+![Ordre de lancement des jobs](Img_Rapport/ordre_auto_release.drawio.png "Ordre de lancement des jobs")
+
 ## Lancement du projet
 ## Retour d'expérience
