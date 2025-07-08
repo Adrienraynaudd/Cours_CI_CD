@@ -77,26 +77,39 @@ Pour optimiser la CI plusieurs workflows ont été mis en place :
 
 ![Dependabot](Img_Rapport/Dependabot.png "Dependabot")
 
-- `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il va lancer tout les tests afin de verifier que le code ajouté sur `main` n'apporte pas de problemes au projet.
-- `matrice-check` :  Lors d'une pull request sur `main`, si la branche source commence par `feature/`, ce workflow va tester si le projet fonctionne sur different systemes d'exploitation (Linux, MacOS, Windows) mais aussi sur differente version de Rust.
-- `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.
+- `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il va lancer tout les tests afin de verifier que le code ajouté sur `main` n'apporte pas de problemes au projet.  
+
+![Dev Workflow](Img_Rapport/Dev_Workflow.png "Dev Workflow")
+- `matrice-check` :  Lors d'une pull request sur `main`, si la branche source commence par `feature/`, ce workflow va tester si le projet fonctionne sur different systemes d'exploitation (Linux, MacOS, Windows) mais aussi sur differente version de Rust.  
+
+![Matrice Check](Img_Rapport/Matrice_Check.png "Matrice Check")
+- `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.  
+
+![Propagate Workflow](Img_Rapport\Propagate_worflow.png "Propagate Workflow")
 - `PR-workflow` :  Ce workflow est executé lors d'une pull request sur les branches `main` ou `release/*`. Il va lancer plusieurs verification sur le nouveau code :  
 
     **Verification Rust/Cargo** :  
-    - Verifie que le code compile grace a `cargo check`
-    - Verifie que le code respecte les conventions de formattage grace a `cargo fmt--check`
-    - Verification supplementaire pour detecter les problemes grace a `cargo clippy`  
-    
-    **Verification CMake** :  
-    - Verifie que le code peut build correctement grace a `cmake --build . --target check_code`  
-    - Build le code grace a `cmake --build . --target build_simeis`  
-    - Genere la documentation grace a `cmake --build . --target build_manual`  
-    - Execute les tests grace a `cmake --build . --target run_tests`  
-    - Nettoie les fichiers de build grace a `cmake --build . --target clean_dev`  
-    
-    **Verification des TODO** :  
-    - Verifie que les TODO et les FIXME sont bien lié a une issue  
+  - Verifie que le code compile grace a `cargo check`  
+        ![Cargo Check](Img_Rapport/Cargo_Check.png "Cargo Check")
+  - Verifie que le code respecte les conventions de formattage grace a `cargo fmt--check`  
+        ![Cargo format](Img_Rapport/Cargo_format.png "Cargo format")
+  - Verification de la structure du code, linting, avec `cargo clippy`  
+        ![Cargo Clippy](Img_Rapport/Cargo_clippy.png "Cargo Clippy")
 
+    **Verification CMake** :  
+  - Verifie que le code peut build correctement grace a `cmake --build . --target check_code`  
+        ![CMake Check](Img_Rapport/CMake_check.png "CMake Check")
+  - Build le code grace a `cmake --build . --target build_simeis`  
+        ![CMake Build](Img_Rapport/CMake_build.png "CMake Build")
+  - Genere la documentation grace a `cmake --build . --target build_manual`  
+        ![CMake Documentation](Img_Rapport/CMake_build_doc.png "CMake Documentation")
+  - Execute les tests grace a `cmake --build . --target run_tests`  
+        ![CMake Tests](Img_Rapport/CMake_tests.png "CMake Tests")
+  - Nettoie les fichiers de build grace a `cmake --build . --target clean_dev`  
+        ![CMake Clean](Img_Rapport/CMake_build_clean.png "CMake Clean")  
+    **Verification des TODO** :  
+  - Verifie que les TODO et les FIXME sont bien lié a une issue  
+        ![Check TODO](Img_Rapport/Todo_check.png "Check TODO")
 
 
 
