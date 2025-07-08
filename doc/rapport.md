@@ -258,26 +258,26 @@ Cependant, d'avantage de temps aurait été appréciable afin de pouvoir d'avant
 
 ### Git  
 
-Git est un logiciel de gestion de code. Il permet de suivre les modifications apportées au code, de collaborer avec d'autre développeurs et gerer les versions des projets. Il utilise un système de branches pour permettre aux développeurs de travailler sur des fonctionnalités ou des corrections sans affecter le code principal.
+Git est un logiciel de gestion de code. Il permet de suivre les modifications apportées au code, de collaborer avec d'autres développeurs et gérer les versions des projets. Il utilise un système de branches pour permettre aux développeurs de travailler sur des fonctionnalités ou des corrections sans affecter le code principal.
 
-- **Pull Request** : Une pull request (PR) est une demande de fusion d'une branche dans une autre. Elle permet de proposer des modifications et de les faire examiner avant de les intégrer dans le code principal.  
-- **Workflow** : Un workflow est un ensemble de tâches automatisées qui s'exécutent.
-- **Job** : Un job est une tâche individuelle dans un workflow. Il peuvent être exécuté de manière dépendente les une des autres ou en parallèle avec d'autres jobs.
-- **Release** : Une release est une version stable et figé du projet.
-- **Artefact** : Un artefact est un produit fini téléchargeable. Il peut s'agir d'un binaire, d'un package, d'une bibliotheque, une source, etc.
-- **Tag** : Un tag est une référence à un commit spécifique dans l'historique du projet. Il sagit d'une version fix dans le temps.
-- **Branche** : Une branche est une version parallèle du code. Elle permet de travailler sur des fonctionnalités ou des corrections sans affecter le code principal.
-- **Commit** : Un commit est une modification apportée au code. Il contient un message décrivant les changements effectués et un identifiant unique.
-- **Issue** : Une issue est un ticket de suivi des problèmes ou des fonctionnalités à implémenter dans le projet. Elle permet de suivre les tâches à accomplir.
-- **Merge** : Une fusion (merge) est l'action de combiner les modifications d'une branche dans une autre. Cela permet d'intégrer les changements effectués dans une branche de développement dans la branche principale du projet.
+- **Pull Request** : une pull request (PR) est une demande de fusion d'une branche dans une autre. Elle permet de proposer des modifications et de les faire examiner avant de les intégrer dans le code principal.  
+- **Workflow** : un workflow est un ensemble de tâches automatisées qui s'exécutent.
+- **Job** : un job est une tâche individuelle dans un workflow. Ils peuvent être exécutés de manière dépendante les unes des autres ou en parallèle avec d'autres jobs.
+- **Release** : Une release est une version stable et figée du projet.
+- **Artefact** : un artefact est un produit fini téléchargeable. Il peut s'agir d'un binaire, d'un package, d'une bibliotheque, une source, etc.
+- **Tag** : un tag est une référence à un commit spécifique dans l'historique du projet. Il s'agit d'une version fix dans le temps.
+- **Branche** : une branche est une version parallèle du code. Elle permet de travailler sur des fonctionnalités ou des corrections sans affecter le code principal.
+- **Commit** : un commit est une modification apportée au code. Il contient un message décrivant les changements effectués et un identifiant unique.
+- **Issue** : une issue est un ticket de suivi des problèmes ou des fonctionnalités à implémenter dans le projet. Elle permet de suivre les tâches à accomplir.
+- **Merge** : une fusion (merge) est l'action de combiner les modifications d'une branche dans une autre. Cela permet d'intégrer les changements effectués dans une branche de développement dans la branche principale du projet.
 
 ### API
 
- Une API est une interface qui permet à deux applications ou services de communiquer entre eux. Elle définit les règles et les formats d'échange de données. Dans le cas de Simeis, l'API permet aux clients de communiquer avec le serveur, à travers des URL, pour récupérer des informations sur le jeu, envoyer des actions, etc.
+Une API est une interface qui permet à deux applications ou services de communiquer entre eux. Elle définit les règles et les formats d'échange de données. Dans le cas de Simeis, l'API permet aux clients de communiquer avec le serveur, à travers des URL, pour récupérer des informations sur le jeu, envoyer des actions, etc.
 
 ### Compilation
 
-La compilation est l'opération qui permet de traduire le code source d'un logiciel en un programme exécutable dans un format binaire, le « langage machine »
+La compilation est l'opération qui permet de traduire le code source d'un logiciel en un programme exécutable dans un format binaire, le « langage machine. »
 
 ### Build
 
@@ -285,17 +285,17 @@ Le build est le processus de transformation du code source en un programme exéc
 
 ### CI/CD
 
-- **CI** : La CI (Intégration Continue) consiste a automatiser divers processus tels que la compilation, le lancement des tests, la verification de la qualité du code, etc.
-- **CD** : La CD (Déploiement Continu) est le processus de déploiement automatique des modifications validées dans divers environement tel que la production. Cela permet de livrer rapidement les nouvelles fonctionnalités et corrections aux utilisateurs.
+- **CI** : la CI (intégration Continue) consiste à automatiser divers processus tels que la compilation, le lancement des tests, la vérification de la qualité du code, etc.
+- **CD** : la CD (Déploiement Continu) est le processus de déploiement automatique des modifications validées dans divers environnements tel que la production. Cela permet de livrer rapidement les nouvelles fonctionnalités et corrections aux utilisateurs.
 
-### Deploiement
+### Déploiement
 
 - **SSH** : SSH est une méthode permettant d'envoyer en toute sécurité des commandes à un ordinateur sur un réseau non sécurisé.
 
-- **Distribution Linux** : Une distribution Linux est un système d'exploitation prêt à être installé, conçu à partir d'un noyau Linux
+- **Distribution Linux** : une distribution Linux est un système d'exploitation prêt à être installé, conçue à partir d'un noyau Linux.
 
 - **DEBIAN** : Debian est une distribution Linux, composée presque exclusivement de logiciels libres.
 
-- **Conteneur** :Un conteneur est un environnement d'exécution contenant tous les composants nécessaires, tels que le code, les dépendances et les bibliothèques, nécessaires pour exécuter le code de l'application sans utiliser les dépendances de la machine hôte.
+- **Conteneur** : un conteneur est un environnement d'exécution contenant tous les composants nécessaires, tels que le code, les dépendances et les bibliothèques, nécessaires pour exécuter le code de l'application sans utiliser les dépendances de la machine hôte.
 
-- **DOCKER** : Le logiciel Docker est une technologie de conteneurisation qui permet la création et l'utilisation de conteneurs Linux.
+- **DOCKER** : le logiciel Docker est une technologie de conteneurisation qui permet la création et l'utilisation de conteneurs Linux.
