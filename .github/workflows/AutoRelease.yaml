@@ -96,12 +96,24 @@ jobs:
           #!/bin/bash
           set -e
 
-          if ! id -u simeis &>/dev/null; then
-            useradd --system --no-create-home --shell /usr/sbin/nologin simeis
+          # Créer l'utilisateur simeis_AMP s'il n'existe pas
+          if ! id -u simeis_AMP &>/dev/null; then
+            useradd --system --no-create-home --shell /usr/sbin/nologin simeis_AMP
           fi
 
+          # S'assurer que l'utilisateur simeis_AMP peut lire le binaire
+          chown root:simeis_AMP /usr/bin/simeis-server_AMP
+          chmod 755 /usr/bin/simeis-server_AMP
+
+          # Recharger systemd et démarrer le service
           systemctl daemon-reload
           systemctl enable simeis_AMP.service
+          
+          # Arrêter le service s'il tourne déjà
+          systemctl stop simeis_AMP.service || true
+          
+          # Attendre un peu puis démarrer
+          sleep 2
           systemctl start simeis_AMP.service || true
 
           exit 0
@@ -112,13 +124,22 @@ jobs:
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
+          Wants=network-online.target
 
           [Service]
-          User=simeis
-          Group=simeis
+          Type=simple
+          User=simeis_AMP
+          Group=simeis_AMP
           ExecStart=/usr/bin/simeis-server_AMP
-          Restart=on-failure
+          Restart=always
+          RestartSec=5
           LimitNOFILE=65536
+          WorkingDirectory=/tmp
+          Environment=RUST_LOG=info
+          StandardOutput=journal
+          StandardError=journal
+          KillMode=mixed
+          TimeoutStopSec=30
 
           [Install]
           WantedBy=multi-user.target
@@ -311,7 +332,31 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb"
 
+      - name: Check service status and restart if needed
+        run: |
+          # Vérifier le statut du service
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
+            echo 'Checking service status...'
+            sudo systemctl status simeis_AMP.service || true
+            
+            echo 'Checking service logs...'
+            sudo journalctl -u simeis_AMP.service --no-pager -n 20 || true
+            
+            echo 'Restarting service...'
+            sudo systemctl stop simeis_AMP.service || true
+            sleep 2
+            sudo systemctl start simeis_AMP.service
+            sleep 5
+            
+            echo 'Final status check...'
+            sudo systemctl status simeis_AMP.service || true
+            
+            echo 'Checking if port is open...'
+            sudo netstat -tlnp | grep :8945 || echo 'Port 8945 not found'
+          "
+
       - name: call_version
+        id: get_server_version
         env:
           SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
         run: | 
