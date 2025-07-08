@@ -117,8 +117,7 @@ jobs:
           User=simeis
           Group=simeis
           ExecStart=/usr/bin/simeis-server_AMP
-          Restart=always
-          RestartSec=5
+          Restart=on-failure
           LimitNOFILE=65536
 
           [Install]
@@ -303,13 +302,16 @@ jobs:
       - name: Se connecter et exécuter une commande sur le serveur
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "echo 'Connexion réussie!' && uptime"
+
           BRANCH_NAME="${GITHUB_REF##*/}"
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          scp  -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${{ env.VERSION }}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
+
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${VERSION}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
+
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "\
-          sudo apt install -y ~/AdrienMaximePaul/simeis-server_${{ env.VERSION }}.deb && \
-          sudo systemctl status simeis_AMP.service"
+            sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb && \
+            nohup simeis-server >/dev/null 2>&1 &"
 
       - name: call_version
         env:
