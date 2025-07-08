@@ -330,12 +330,11 @@ jobs:
 
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${VERSION}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
 
-          # Installer le package avec sudo sans mot de passe ou en utilisant SUDO_ASKPASS
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
             echo 'Installing package...'
-            sudo -n apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb || {
+            apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb || {
               echo 'Sudo without password failed, trying with DEBIAN_FRONTEND=noninteractive'
-              DEBIAN_FRONTEND=noninteractive sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
+              DEBIAN_FRONTEND=noninteractive apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
             }
           "
 
