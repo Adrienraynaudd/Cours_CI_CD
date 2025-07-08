@@ -339,13 +339,12 @@ jobs:
           "
 
       - name: call_version
-        id: get_server_version
         env:
           SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
         run: | 
-          VERSION=$(grep '^version =' Cargo.toml | head -1 | cut -d '"' -f2)
+          VERSION=$(grep '^version =' simeis-server/Cargo.toml | head -1 | cut -d '"' -f2)
           echo "version_cargo=$VERSION" >> $GITHUB_OUTPUT
-          VERSION_SERVER=$(curl -s $SERVER_URL/version)
+          VERSION_SERVER=$(curl -s $SERVER_URL/version | grep -o 'version:[^}]*' | cut -d ':' -f2)
           echo "version_server=$VERSION_SERVER" >> $GITHUB_OUTPUT
 
       - name: Compare_versions
