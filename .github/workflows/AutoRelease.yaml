@@ -339,6 +339,7 @@ jobs:
                 sudo systemctl stop simeis_AMP.service
                 sudo systemctl disable simeis_AMP.service
             fi
+          fi
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} " mkdir -p ~/AdrienMaximePaul"
 
@@ -350,6 +351,7 @@ jobs:
           "
 
       - name: call_version
+        id: get_server_version
         env:
           SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
         run: | 
