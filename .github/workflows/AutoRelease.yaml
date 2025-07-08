@@ -347,7 +347,7 @@ jobs:
           VERSION_SERVER=$(curl -s $SERVER_URL/version | grep -o 'version:[^}]*' | cut -d ':' -f2)
           echo "version_server=$VERSION_SERVER" >> $GITHUB_OUTPUT
 
-      - name: Compare_versions
+      - name: Compare_versions 
         run: |
           echo "Version Cargo.toml: ${{ steps.get_server_version.outputs.version_cargo }}"
           echo "Version serveur: ${{ steps.get_server_version.outputs.version_server }}"
