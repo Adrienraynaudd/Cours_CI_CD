@@ -250,9 +250,12 @@ Nous transférons ensuite le package sur le serveur distant et installation la n
 ![Déploiement](Img_Rapport/deploiement.png "Déploiement du Server")
 
 ## Retour d'expérience
-Ce projet de CI/CD étais tres complet et ludique. L'utilisation d'un jeu pour travail rend le tout plus agréable pour avancer.  
+Ce projet de CI/CD étais tres complet et ludique. L'utilisation d'un jeu comme base du projet est intéréssante et nous fait gagner du temps aux lieux de nous refaire faire un projet.
+l'ordre des tp était aussi très bien pensé, il nous a permis de découvrir les différentes étapes de la CI/CD de manière progressive. Nous avons commencé par la mise en place d'une CI simple, puis nous avons ajouté des vérifications de qualité du code, des tests fonctionnels et enfin la mise en place d'un déploiement automatisé.
+Nous avons également découvert l'utilisation de GitHub Actions pour automatiser les workflows de CI/CD.
 Les nombreux travaux réalisés ont permis de découvrir de maniere large le domaine de la CI/CD.
-Cependant, d'avantage de temps aurait été appréciable afin de pouvoir d'avantage approfondir chacun des sujets abordés. L'utilisation de rust et cargo etait un peu compiquée au debut car nous ne l'avions jamais utilisé avant. 
+Cependant, d'avantage de temps aurait été appréciable afin de pouvoir d'avantage approfondir chacun des sujets abordés et de pouvoir faire toute les parties au lieux de séparer les exercices.
+Enfin le choix de nous refaire faire certaine fonctionnalitées etait une bonne idée pour nous permettre de bien comprendre leurs utilisations et leurs limites.
 
 ## Léxiques
 
