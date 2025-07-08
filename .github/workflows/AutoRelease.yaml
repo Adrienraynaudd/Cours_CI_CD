@@ -328,8 +328,8 @@ jobs:
           VERSION="${BRANCH_NAME//release\//v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV 
 
-          # Ensure AdrienMaximePaul directory exists
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "mkdir -p ~/AdrienMaximePaul"
+          # Ensure AdrienMaximePaul directory exists (remove file if exists, then create directory)
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "rm -f ~/AdrienMaximePaul && mkdir -p ~/AdrienMaximePaul"
 
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${VERSION}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul/
 
