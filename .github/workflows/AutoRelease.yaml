@@ -339,41 +339,6 @@ jobs:
             }
           "
 
-      - name: Check service status and restart if needed
-        run: |
-          # Vérifier les permissions sudo et installer le package
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
-            echo 'Checking sudo permissions...'
-            sudo -n whoami || echo 'Sudo requires password'
-            
-            echo 'Checking hostname resolution...'
-            hostname
-            cat /etc/hosts | grep simeis || echo 'simeis not in /etc/hosts'
-            
-            echo 'Checking service status...'
-            sudo systemctl status simeis_AMP.service || true
-            
-            echo 'Checking service logs...'
-            sudo journalctl -u simeis_AMP.service --no-pager -n 20 || true
-            
-            echo 'Checking if user simeis_AMP exists...'
-            id simeis_AMP || echo 'User simeis_AMP does not exist'
-            
-            echo 'Restarting service...'
-            sudo systemctl stop simeis_AMP.service || true
-            sleep 2
-            sudo systemctl start simeis_AMP.service
-            sleep 5
-            
-            echo 'Final status check...'
-            sudo systemctl status simeis_AMP.service || true
-            
-            echo 'Checking if port is open...'
-            sudo netstat -tlnp | grep :8945 || echo 'Port 8945 not found'
-            
-            echo 'Alternative port check with ss...'
-            ss -tlnp | grep :8945 || echo 'Port 8945 not found with ss'
-          "
 
       - name: call_version
         id: get_server_version
