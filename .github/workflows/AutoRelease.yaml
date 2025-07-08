@@ -123,7 +123,7 @@ jobs:
           [Install]
           WantedBy=multi-user.target
           EOF
-              chmod 0644 $PKGDIR/etc/systemd/system/simeis_AMP.service
+          chmod 0644 $PKGDIR/etc/systemd/system/simeis_AMP.service
 
 
 
@@ -311,8 +311,7 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "\
             sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb && \
-            sudo systemctl status simeis_AMP --no-pager &
-
+            
 
 
       - name: call_version
