@@ -24,7 +24,7 @@ L'API est composer de deux dossiers principaux :
 - `simeis-data` : contient les modèles de données ainsi que les fonctions métier.
 - `simeis-api` : contient les routes de l'API ainsi que la configuration
 
-```
+```bash
 ├── simeis-data
 │   ├── src
 │   │   ├── galaxy
@@ -58,7 +58,10 @@ L'API est composer de deux dossiers principaux :
 ```
 
 
-## Travail des développeurs
+### Le workflow de travail
+
+La branche `main` est la branche de développement du projet. C'est sur cette branche que les développeurs travaillent et ajoutent de nouvelles fonctionnalités. Pour chaque changement a apporter, les développeurs créent une nouvelle branche de travail à partir de `main`. Cette branche de travail est nommée en fonction de la fonctionnalité ou du bug à corriger, par exemple `feature/ajout-nouvelle-fonctionnalite` ou `bug/correction-bug`. De cette manière, les développeurs peuvent travailler sur plusieurs fonctionnalités en parallèle sans interférer les uns avec les autres. De plus, on peut facilement connaitre la nature du changement sans ce référer à l'issue associée. Une fois le développement terminé, le développeur crée une pull request vers la branche `main`. Cette pull request est ensuite revue par les autres développeursdu projet (au moins 1 personne dont le 'code owner'). De plus des 'jobs github' sont lancé ce qui nous permet d'éffectué des vérifications sur la qualité du code qui a été ajouter. Si la pull request est approuvée et si les 'jobs github' ont été executé avec succès, elle est fusionnée dans la branche `main`. Si des modifications sont nécessaires, elles sont demandées au développeur et la pull request est mise à jour en conséquence. Une fois tous les développement terminés, une nouvelle version du projet peut etre créée. Pour cela, on crée une nouvelle branche `release/<version>` à partir de `main`. Un commit vide est ajouter sur la branche `main` pour marquer la fin de la version et permettre de créer une nouvelle pull request vers `release/<version>`. De nouveaux 'jobs github' sont lancés pour éffectuer des vérifications supplémentaires sur la qualité du code et la sécurité des dépendances. C'est jobs sont bien plus long car ils poussent plus loin les vérifications, ainsi pour gagné du temps dans les développements, ils ne sont pas lancés à chaque pull request mais uniquement sur les branches de release. Une fois la pull request approuvée et les jobs validées, la pull request est fusionnée dans la branche `release/<version>`. Enfin, un workflow de release est lancé pour créer une nouvelle release du projet. Ce workflow va générer un binaire, un package debian et une image docker du projet. Il va ensuite créer une release sur GitHub avec les artefacts générés. Cette release ne peut plus recevoir de nouvelles fonctionnalités, cepandent elle peut recevoir des correctifs. pour cela, on créer une nouvelle branche `bug/<nom-du-bug>` à partir de la branche `main`. Une fois le correctif apporté, on crée une pull request vers `main` et on ajoute les labels `propagate:release/<version>` pour chaque release corrigée par ce correctif. Une fois la pull request approuvée, un jobs va automatiquement créer une nouvelle pull request vers chaque branche de release pour propager le correctif. De cette manière, on s'assure que les correctifs sont bien propagés sur toutes les versions du projet. La brache `main` ainsi que les branches `bug/<nom-du-bug>` sont les seules branches qui peuvent être déversées dans une branche de release. Cela permet de s'assurer que les branches de release ne contiennent que des correctifs et pas de nouvelles fonctionnalités. De plus, cela permet de s'assurer que les branches de release sont stables et ne contiennent pas de bugs.
+
 ### Mise en cache  
 Pour optimiser les performances des workflows, un cache est mis en place pour les dependaces et les builds :    
 - **Les dependances cargo**  
@@ -66,50 +69,57 @@ Pour optimiser les performances des workflows, un cache est mis en place pour le
 - **Le build cargo**  
 - **Les dependances python**  
 
-Voilà un schema récapitulatif du fonctionnement du cache :
+Le cache est mis en place pour éviter de télécharger les dépendances à chaque exécution du workflow. Cela permet de gagner du temps et d'optimiser les performances des workflows. Le cache est géré directement par GitHub Actions. sont fonctionnement est simple :
 
-![Cache](Img_Rapport/Fonctionnement_Cache.png "Fonctionnement du cache")
+- On vérifie si le cache existe et si c'est le cas, on le restaure.
+- Si le cache n'existe pas, on télécharge les dépendances ou on build le projet et on les ajoute au cache.
+- On execute la suite du workflow avec les dépendances ou le build récupéré du cache.
+
+le cache est identifé par un hash. Celui ci est calculé à partir des fichiers de configuration en fonction de la partie mis en cache (les packages manager pour les dépendances, le code sources pour les builds). Ainsi, si les fichiers de configurations sont modifiés par le développement, le hash ce retrouve modifié et le cache est concidérer invalide. Ainsi, il sera recréé pour permettre l'ajoue de c'est modifications. dans celui-ci.
+
+![Cache](Img_Rapport/cache.drawio.png "Fonctionnement du cache")
 
 
-### Workflow développement
-Pour optimiser la CI plusieurs workflows ont été mis en place :
-- `dependabot` :  Le workflow dependabot permet de mettre à jour les dépendances du projet automatiquement, à minuit, tous les jours.  
+Pour optimiser le développement du projet, une CI est mise en place avec GitHub Actions.
+Cette CI va permettre de lancer des vérifications sur le code à chaque pull request, mais aussi de mettre à jour les dépendances du projet automatiquement.
+De plus, elle va permettre de lancer des tests sur le projet pour s'assurer que les fonctionnalités sont bien fonctionnelles et qu'aucune régression n'est introduite par les nouvelles fonctionnalités.
+
+- `dependabot` :  Ce worklow est exécuté tous les jours a minuit. Il ne contient qu'un job. Celui-ci va venir mettre à jour les dépendances du projet. Si des dépendances ont été mises à jour, une pull request est automatiquement créée pour ajouter les nouvelles dépendances au projet. Elle n'est pas automatiquement fusionnée pour qu'un développeur effectue des vérifications sur les nouvelles dépendances afin de s'assurer qu'elles sont toujours sure et qu'elles ne causent pas de bug dans le projet.
 
 ![Dependabot](Img_Rapport/Dependabot.png "Dependabot")
 
-- `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il va lancer tout les tests afin de verifier que le code ajouté sur `main` n'apporte pas de problemes au projet.  
+- `dev-workflow` :  dev-workflow est executé à chaque pull request sur la branche `main`. Il ne possède qu'un seul job. Celui-ci va lancé l'ensemble des tests du projet pour s'assurer que les nouvelles fonctionnalités ne causent pas de régression ainsi que les nouvelles fonctionnalités sont bien fonctionnelles.
 
 ![Dev Workflow](Img_Rapport/Dev_Workflow.png "Dev Workflow")
-- `matrice-check` :  Lors d'une pull request sur `main`, si la branche source commence par `feature/`, ce workflow va tester si le projet fonctionne sur different systemes d'exploitation (Linux, MacOS, Windows) mais aussi sur differente version de Rust.  
+
+- `matrice-check` : Ce workflow est exécuté à chaque pull request sur la branche `main` et que la branche source commence par `feature/`. Ce workflow ce lance pour les système d'exploitation Linux, MacOS, Windows anisi que pour les version de rust 1.75.0, 1.80.0, 1.85.0, 1.88.0. Il va ensuite, pour chaqu'un d'entre eux, vérifié que le code compile correctement. Cela nous permet de nous assurer que le code est compatible avec plusieurs systèmes d'exploitation et versions de Rust.
 
 ![Matrice Check](Img_Rapport/Matrice_Check.png "Matrice Check")
-- `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.  
 
-![Propagate Workflow](Img_Rapport\Propagate_worflow.png "Propagate Workflow")
-- `PR-workflow` :  Ce workflow est executé lors d'une pull request sur les branches `main` ou `release/*`. Il va lancer plusieurs verification sur le nouveau code :  
+- `PR-workflow` :  Ce workflow est executé lors d'une pull request sur les branches `main` ou `release/<version>`. Il va lancer plusieurs verification sur le nouveau code :  
 
-    **Verification Rust/Cargo** :  
-  - Verifie que le code compile grace a `cargo check`  
-        ![Cargo Check](Img_Rapport/Cargo_Check.png "Cargo Check")
+- **Verification Rust/Cargo** :  
+  - Verifie que le code peut compiler et si la syntaxe du code est correct grace a `cargo check`
+  ![Cargo Check](Img_Rapport/Cargo_Check.png "Cargo Check")
   - Verifie que le code respecte les conventions de formattage grace a `cargo fmt--check`  
-        ![Cargo format](Img_Rapport/Cargo_format.png "Cargo format")
+  ![Cargo format](Img_Rapport/Cargo_format.png "Cargo format")
   - Verification de la structure du code, linting, avec `cargo clippy`  
-        ![Cargo Clippy](Img_Rapport/Cargo_clippy.png "Cargo Clippy")
+  ![Cargo Clippy](Img_Rapport/Cargo_clippy.png "Cargo Clippy")
 
-    **Verification CMake** :  
+- **Verification CMake** :  
   - Verifie que le code peut build correctement grace a `cmake --build . --target check_code`  
-        ![CMake Check](Img_Rapport/CMake_check.png "CMake Check")
+  ![CMake Check](Img_Rapport/CMake_check.png "CMake Check")
   - Build le code grace a `cmake --build . --target build_simeis`  
-        ![CMake Build](Img_Rapport/CMake_build.png "CMake Build")
+  ![CMake Build](Img_Rapport/CMake_build.png "CMake Build")
   - Genere la documentation grace a `cmake --build . --target build_manual`  
-        ![CMake Documentation](Img_Rapport/CMake_build_doc.png "CMake Documentation")
+  ![CMake Documentation](Img_Rapport/CMake_build_doc.png "CMake Documentation")
   - Execute les tests grace a `cmake --build . --target run_tests`  
-        ![CMake Tests](Img_Rapport/CMake_tests.png "CMake Tests")
+  ![CMake Tests](Img_Rapport/CMake_tests.png "CMake Tests")
   - Nettoie les fichiers de build grace a `cmake --build . --target clean_dev`  
-        ![CMake Clean](Img_Rapport/CMake_build_clean.png "CMake Clean")  
-    **Verification des TODO** :  
+  ![CMake Clean](Img_Rapport/CMake_build_clean.png "CMake Clean")  
+- **Verification des TODO** :  
   - Verifie que les TODO et les FIXME sont bien lié a une issue  
-        ![Check TODO](Img_Rapport/Todo_check.png "Check TODO")
+  ![Check TODO](Img_Rapport/Todo_check.png "Check TODO")
 
 
 
@@ -149,6 +159,10 @@ Il va lancer plusieurs Jobs :
   Dans le workflow de release, la nouvelle release ne doit ce base que sur la branche `main`. Une fois la release créée, seul des correctifs peuvent y etre apportés. Pour s'assurer de cela, on verifie que la branche source de la pull request commence par `bug/` ou si il s'agit de la branche `main`. SI ce n'est pas le cas on ferme automatiquement la pull request.
 
   ![verification de la source](Img_Rapport/verification.release.drawio.png "verification de la source")
+  
+- `propagate-workflow` :  Lorsqu'une pull request est fermée, si elle a été fusionnée, que la branche source commence par `bug/` et que le label contient `propagate`, ce workflow va créer une nouvelle pull request sur chaque release afin de propager les changements sur toutes les versions du projet.  
+
+![Propagate Workflow](Img_Rapport\Propagate_worflow.png "Propagate Workflow")
 
 ### Déploiement des releases
 
