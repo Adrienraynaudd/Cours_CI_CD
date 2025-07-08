@@ -330,17 +330,34 @@ jobs:
 
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${VERSION}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb"
+          # Installer le package avec sudo sans mot de passe ou en utilisant SUDO_ASKPASS
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
+            echo 'Installing package...'
+            sudo -n apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb || {
+              echo 'Sudo without password failed, trying with DEBIAN_FRONTEND=noninteractive'
+              DEBIAN_FRONTEND=noninteractive sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
+            }
+          "
 
       - name: Check service status and restart if needed
         run: |
-          # Vérifier le statut du service
+          # Vérifier les permissions sudo et installer le package
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
+            echo 'Checking sudo permissions...'
+            sudo -n whoami || echo 'Sudo requires password'
+            
+            echo 'Checking hostname resolution...'
+            hostname
+            cat /etc/hosts | grep simeis || echo 'simeis not in /etc/hosts'
+            
             echo 'Checking service status...'
             sudo systemctl status simeis_AMP.service || true
             
             echo 'Checking service logs...'
             sudo journalctl -u simeis_AMP.service --no-pager -n 20 || true
+            
+            echo 'Checking if user simeis_AMP exists...'
+            id simeis_AMP || echo 'User simeis_AMP does not exist'
             
             echo 'Restarting service...'
             sudo systemctl stop simeis_AMP.service || true
@@ -353,6 +370,9 @@ jobs:
             
             echo 'Checking if port is open...'
             sudo netstat -tlnp | grep :8945 || echo 'Port 8945 not found'
+            
+            echo 'Alternative port check with ss...'
+            ss -tlnp | grep :8945 || echo 'Port 8945 not found with ss'
           "
 
       - name: call_version
