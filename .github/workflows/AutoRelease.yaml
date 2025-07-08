@@ -332,13 +332,12 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
             echo 'Installing package...'
-             dpkg -i ~/AdrienMaximePaul/simeis-server_${VERSION}.deb || {
+            sudo dpkg -i ~/AdrienMaximePaul/simeis-server_${VERSION}.deb || {
               echo 'dpkg failed, trying apt-get install with fix-broken'
-               apt-get install -f -y
-               dpkg -i ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
+              sudo apt-get install -f -y
+              sudo dpkg -i ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
             }
           "
-
 
       - name: call_version
         id: get_server_version
