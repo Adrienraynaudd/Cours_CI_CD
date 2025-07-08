@@ -333,7 +333,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
             echo 'Installing package...'
             apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb || {
-              echo 'Sudo without password failed, trying with DEBIAN_FRONTEND=noninteractive'
               DEBIAN_FRONTEND=noninteractive apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
             }
           "
