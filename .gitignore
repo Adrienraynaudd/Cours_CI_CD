@@ -8,3 +8,5 @@ result
 scores.json
 .vscode
 games/
+.env
+id_rsa

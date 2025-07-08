@@ -46,20 +46,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: simeis-server-binary
-          path: target/release/simeis-server
+          path: target/release/simeis-server_AMP
 
   package-deb:
     runs-on: ubuntu-latest
     needs: upload-binaries
     steps:
 
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
           name: simeis-server-binary
-
-      - name: Checkout repo
-        uses: actions/checkout@v4
 
       - name: Set VERSION env
         run: |
@@ -72,58 +72,81 @@ jobs:
 
       - name: Prepare Debian package folder
         run: |
-          PKGDIR=simeis-server_${{ env.VERSION }}
-          sudo mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin /etc/systemd/system /etc/man
+          export PKGDIR=simeis-server_${{ env.VERSION }}
+          mkdir -p $PKGDIR/DEBIAN $PKGDIR/usr/bin $PKGDIR/etc/systemd/system $PKGDIR/etc/man
 
-          sudo mv simeis-server $PKGDIR/usr/bin/
-          sudo chmod 0755 $PKGDIR/usr/bin/simeis-server
+          ls
+          mv simeis-server_AMP $PKGDIR/usr/bin/
+          chmod 0755 $PKGDIR/usr/bin/simeis-server_AMP
 
-          sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/control
-          Package: simeis-server
-          Version: ${VERSION}
+          cat <<EOF > $PKGDIR/DEBIAN/control
+          Package: simeis-server-${{ env.VERSION }}
+          Version: ${{ env.VERSION }}
           Section: utils
           Priority: optional
           Architecture: amd64
           Depends: libc6 (>= 2.36), systemd
           Maintainer: Ton Nom <ton@email.com>
           Description: Serveur Rust Simeis
-          EOF"
+          EOF
 
-           sudo bash -c "cat <<EOF > /etc/man/manual
-           ${{ env.MAN }}
-           EOF"
+              echo "${{ env.MAN }}" > $PKGDIR/etc/man/manual
 
-          sudo bash -c "cat <<EOF > $PKGDIR/DEBIAN/postinst
+              cat <<'EOF' > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
-          if ! id -u simeis &>/dev/null; then
-            useradd --system --no-create-home --shell /usr/sbin/nologin simeis
+          # Créer l'utilisateur simeis_AMP s'il n'existe pas
+          if ! id -u simeis_AMP &>/dev/null; then
+            useradd --system --no-create-home --shell /usr/sbin/nologin simeis_AMP
           fi
 
+          # S'assurer que l'utilisateur simeis_AMP peut lire le binaire
+          chown root:simeis_AMP /usr/bin/simeis-server_AMP
+          chmod 755 /usr/bin/simeis-server_AMP 
+
+          # Recharger systemd et démarrer le service
           systemctl daemon-reload
-          systemctl enable simeis.service
-          systemctl start simeis.service || true
+          systemctl enable simeis_AMP.service
+          
+          # Arrêter le service s'il tourne déjà
+          systemctl stop simeis_AMP.service || true
+          
+          # Attendre un peu puis démarrer
+          sleep 2
+          systemctl start simeis_AMP.service || true
 
           exit 0
-          EOF"
-          sudo chmod 0755 $PKGDIR/DEBIAN/postinst
+          EOF
+              chmod 0755 $PKGDIR/DEBIAN/postinst
 
-          sudo bash -c "cat <<EOF > /etc/systemd/system/simeis.service
+              cat <<EOF > $PKGDIR/etc/systemd/system/simeis_AMP.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
+          Wants=network-online.target
 
           [Service]
-          User=simeis
-          Group=simeis
-          ExecStart=/usr/bin/simeis-server
-          Restart=on-failure
+          Type=simple
+          User=simeis_AMP
+          Group=simeis_AMP
+          ExecStart=/usr/bin/simeis-server_AMP
+          Restart=always
+          RestartSec=5
           LimitNOFILE=65536
+          WorkingDirectory=/tmp
+          Environment=RUST_LOG=info
+          StandardOutput=journal
+          StandardError=journal
+          KillMode=mixed
+          TimeoutStopSec=30
 
           [Install]
           WantedBy=multi-user.target
-          EOF"
+          EOF
+          chmod 0644 $PKGDIR/etc/systemd/system/simeis_AMP.service
+
+
 
       - name: Build Debian package
         run: |
@@ -220,6 +243,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Get version from branch name
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          VERSION="${BRANCH_NAME//release\//}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Download compiled binary
         uses: actions/download-artifact@v4
         with:
@@ -229,13 +258,13 @@ jobs:
       - name: Download debian
         uses: actions/download-artifact@v4
         with:
-          name: simeis-server_0.42.532.deb
+          name: simeis-server_${{ env.VERSION }}.deb
           path: artifacts
 
       - name: Download docker
         uses: actions/download-artifact@v4
         with:
-          name: simeis-server_0.42.532.tar.gz
+          name: simeis-server_${{ env.VERSION }}.tar.gz
           path: artifacts
 
       - name: Put commit hash/name in env variables
@@ -245,12 +274,7 @@ jobs:
           git log -1 --pretty=%B >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Get version from branch name
-        run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          VERSION="${BRANCH_NAME//release\//}"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
+     
       - name: Release the new binaries
         uses: mini-bomba/create-github-release@v1.1.3
         with:
@@ -269,3 +293,76 @@ jobs:
             artifacts/simeis-server_${{ env.VERSION }}.deb
             artifacts/simeis-server_${{ env.VERSION }}.tar.gz
           clear_attachments: true
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [upload-binaries, package-deb]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set VERSION env
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          VERSION="${BRANCH_NAME//release\//v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+
+      - name: Download compiled binary
+        uses: actions/download-artifact@v4
+        with:
+          name: simeis-server_${{ env.VERSION }}.deb
+
+      - name: set_SSHKEY
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Se connecter et exécuter une commande sur le serveur
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "echo 'Connexion réussie!' && uptime"
+
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          VERSION="${BRANCH_NAME//release\//v}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV 
+
+          if systemctl list-unit-files | grep -q "^simeis_AMP.service"; then
+            if ! systemctl is-active --quiet simeis_AMP.service; then
+                echo "Service is not running, starting and enabling..."
+                sudo systemctl enable simeis_AMP.service
+                sudo systemctl start simeis_AMP.service
+            fi
+            if systemctl is-active --quiet simeis_AMP.service; then
+                echo "Service simeis_AMP.service is active, stopping and disabling it..."
+                sudo systemctl stop simeis_AMP.service
+                sudo systemctl disable simeis_AMP.service
+            fi
+          fi
+
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} " mkdir -p ~/AdrienMaximePaul"
+
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${VERSION}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul/
+
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "
+            echo 'Installing package...'
+            sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb
+          "
+
+      - name: call_version
+        env:
+          SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
+        run: | 
+          VERSION_CARGO=$(grep '^version =' simeis-server/Cargo.toml | head -1 | cut -d '"' -f2)
+          echo "VERSION_CARGO=$VERSION_CARGO" >> $GITHUB_OUTPUT
+          VERSION_SERVER=$(curl -s $SERVER_URL/version | grep -o 'version:[^}]*' | cut -d ':' -f2)
+          echo "VERSION_SERVER=$VERSION_SERVER" >> $GITHUB_OUTPUT
+
+      - name: Compare_versions 
+        run: |
+          if [ "${VERSION_CARGO}" != "${VERSION_SERVER}" ]; then
+            echo "❌ Versions différentes, déploiement invalide."
+            exit 1
+          fi
+
