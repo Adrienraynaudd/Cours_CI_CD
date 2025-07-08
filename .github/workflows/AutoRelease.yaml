@@ -309,25 +309,23 @@ jobs:
 
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa simeis-server_${VERSION}.deb student@${{ vars.SERVER_URL }}:~/AdrienMaximePaul
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "\
-            sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb && \
-            
-
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa student@${{ vars.SERVER_URL }} "sudo apt install -y ~/AdrienMaximePaul/simeis-server_${VERSION}.deb"
 
       - name: call_version
         env:
           SERVER_URL: http://${{ vars.SERVER_URL }}:${{ vars.SERVER_PORT }}
         run: | 
           VERSION=$(grep '^version =' Cargo.toml | head -1 | cut -d '"' -f2)
+          echo "version_cargo=$VERSION" >> $GITHUB_OUTPUT
           VERSION_SERVER=$(curl -s $SERVER_URL/version)
           echo "version_server=$VERSION_SERVER" >> $GITHUB_OUTPUT
 
       - name: Compare_versions
         run: |
-          echo "Version Cargo.toml: ${{ steps.extract_version.outputs.version_cargo }}"
+          echo "Version Cargo.toml: ${{ steps.get_server_version.outputs.version_cargo }}"
           echo "Version serveur: ${{ steps.get_server_version.outputs.version_server }}"
 
-          if [ "${{ steps.extract_version.outputs.version_cargo }}" != "${{ steps.get_server_version.outputs.version_server }}" ]; then
+          if [ "${{ steps.get_server_version.outputs.version_cargo }}" != "${{ steps.get_server_version.outputs.version_server }}" ]; then
             echo "❌ Versions différentes, déploiement invalide."
             exit 1
           fi
