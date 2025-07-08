@@ -231,6 +231,16 @@ l'ensemble des jobs ne ce lance pas en même temps car certains dépendent d'aut
 
 ![Ordre de lancement des jobs](Img_Rapport/ordre_auto_release.drawio.png "Ordre de lancement des jobs")
 
+## Déploiement
+
+Dans un premier temps, nous récupérons la version de la release, qui servira à identifier la bonne version du package d'installation. Après avoir téléchargé ce package, nous créons un fichier contenant notre clé SSH. Cette clé nous permet ensuite d'établir une connexion avec le serveur distant.
+
+Une fois connectés, nous vérifions si une instance du serveur est déjà en cours d'exécution. Si oui, nous l'arrêtons et la désactivons afin de garantir que seule la nouvelle version sera active. Ensuite, nous redémarrons le serveur pour nous assurer que la bonne version est bien lancée.
+
+Nous transférons ensuite le package sur le serveur distant et installation la nouvelle version sur le serveur avec ses dépendances. Pour finir, nous vérifions que la version retournée par l’API de la route /version correspond bien au numéro de version fourni par le package Debian.
+
+![Déploiement](Img_Rapport/deploiement.png "Déploiement du Server")
+
 ## Retour d'expérience
 
 ## Léxiques
@@ -254,4 +264,16 @@ La compilation est l'opération qui permet de traduire le code source d'un logic
 Le build est le processus de transformation du code source en un programme exécutable. Il comprend la compilation, l'assemblage des dépendances et la création d'un fichier binaire prêt à être exécuté.
 ### CI/CD
 - **CI** : La CI (Intégration Continue) consiste a automatiser divers processus tels que la compilation, le lancement des tests, la verification de la qualité du code, etc. 
-- **CD** : La CD (Déploiement Continu) est le processus de déploiement automatique des modifications validées dans divers environement tel que la production. Cela permet de livrer rapidement les nouvelles fonctionnalités et corrections aux utilisateurs. 
+- **CD** : La CD (Déploiement Continu) est le processus de déploiement automatique des modifications validées dans divers environement tel que la production. Cela permet de livrer rapidement les nouvelles fonctionnalités et corrections aux utilisateurs.
+
+### Deploiement
+
+- **SSH** : SSH est une méthode permettant d'envoyer en toute sécurité des commandes à un ordinateur sur un réseau non sécurisé.
+
+- **Distribution Linux** : Une distribution Linux est un système d'exploitation prêt à être installé, conçu à partir d'un noyau Linux
+
+- **DEBIAN** : Debian est une distribution Linux, composée presque exclusivement de logiciels libres.
+
+- **Conteneur** :Un conteneur est un environnement d'exécution contenant tous les composants nécessaires, tels que le code, les dépendances et les bibliothèques, nécessaires pour exécuter le code de l'application sans utiliser les dépendances de la machine hôte.
+
+- **DOCKER** : Le logiciel Docker est une technologie de conteneurisation qui permet la création et l'utilisation de conteneurs Linux.
