@@ -4,18 +4,12 @@ import tempfile
 import shutil
 from commun import get, init_new_player
 
-
+# Je ne veux pas de unittest, surement proposé par ChatGPT
 class TestScenario1(unittest.TestCase):
-    
-    def setUp(self):
-        self.temp_dir = tempfile.mkdtemp()
-        self.original_cwd = os.getcwd()
-        os.chdir(self.temp_dir)
-        self.test_username = "test9"
-    
-    def tearDown(self):
-        os.chdir(self.original_cwd)
-        shutil.rmtree(self.temp_dir)
+
+    # Tout ceci ne sert à rien
+    # --------SNIP-------
+    # --------SNIP-------
     
     def test_scenario(self):
         try:

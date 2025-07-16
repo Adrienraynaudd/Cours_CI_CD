@@ -8,8 +8,8 @@ jobs:
 
     strategy:
       matrix:
-        version: [1.75.0,1.80.0,1.85.0,1.88.0]
-        os: [macos-latest,ubuntu-latest,windows-latest]
+        version: [1.75.0, 1.80.0, 1.85.0, 1.88.0]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     name: cargo check
     runs-on: ${{ matrix.os}}
 

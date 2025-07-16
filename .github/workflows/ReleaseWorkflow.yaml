@@ -100,6 +100,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Dans un script SVP, c'est sale
+      # En plus un script permet à un developpeur de le lancer en local facilement
       - name: check unused dependencies
         run: |
           failed=0
@@ -192,7 +194,7 @@ jobs:
           sleep 1
 
       - name: Run Python functional tests
-        run: python -m unittest discover tests/fonctionnels/
+        run: python -m unittest discover tests/fonctionnels/  # Bwerk, mais cohérent
 
   coverage:
     name: coverage
@@ -229,6 +231,7 @@ jobs:
         name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
 
+      # Propre
       - name: Run cargo tarpaulin coverage
         id: coverage
         run: |

@@ -12,29 +12,30 @@ class TestUpgrade(unittest.TestCase):
     
         costs = get(f"/ship/{ships_id}/navigate/{pla[0]}/{pla[1]}/{pla[2]}",  key=key)["duration"]
 
-        statu = get(f"/player/{player_id}",  key=key)["ships"][0]["state"]
+        # è_é
+        status = get(f"/player/{player_id}",  key=key)["ships"][0]["state"]
         
         start = get(f"/player/{player_id}", key=key)["ships"][0]["position"]
         
         get("/tick")
         current = get(f"/player/{player_id}", key=key)["ships"][0]["position"]
-        self.assertEqual(list(statu.keys())[0], "InFlight")
+        self.assertEqual(list(status.keys())[0], "InFlight")
         self.assertNotEqual(current, pla)
         self.assertNotEqual(current, start)
         
         get(f"/tick/{int(costs * 50) - 1}")
         current = get(f"/player/{player_id}", key=key)["ships"][0]["position"]
-        statu = get(f"/player/{player_id}",  key=key)["ships"][0]["state"]
-        self.assertEqual(list(statu.keys())[0], "InFlight")
+        status = get(f"/player/{player_id}",  key=key)["ships"][0]["state"]
+        self.assertEqual(list(status.keys())[0], "InFlight")
         self.assertNotEqual(current, pla)
         self.assertNotEqual(current, start)
         
         
         get(f"/tick")
-        statu = get(f"/player/{player_id}",  key=key)["ships"][0]["state"]        
+        status = get(f"/player/{player_id}",  key=key)["ships"][0]["state"]        
         current = get(f"/player/{player_id}", key=key)["ships"][0]["position"]
         self.assertEqual(current, pla)
-        self.assertEqual(statu, "Idle")
+        self.assertEqual(status, "Idle")
 
 
         

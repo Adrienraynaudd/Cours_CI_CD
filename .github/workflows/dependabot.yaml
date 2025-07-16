@@ -1,6 +1,7 @@
 name: DependabotCI
 
 on:
+  # Non, on veut pas qu'il run sur des PR
   pull_request:
     branches:
       - "main"

@@ -5,6 +5,7 @@ on:
     types: [closed]
 
 jobs:
+  # Stylé
   propagate:
     runs-on: ubuntu-latest
 
