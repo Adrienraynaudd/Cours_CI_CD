@@ -44,6 +44,11 @@ def generate_metrics(issues):
             name = label['name']
             label_count[name] = label_count.get(name, 0) + 1
 
+    # Pas vraiment des métriques, c'est des valeurs absolues, qui ne renseignent pas
+    # vraiment sur l'état du projet
+    #     "Est-ce qu'on croule sous les bug ?"    (Ratio bug / tot issues)
+    #     "Est-ce qu'on a trop de features en cours d'ajout, qu'il faut stabiliser ?" (Ratio feature req / tot issues)
+    #     "Est-ce qu'on a un pic anormal de création d'issues ?" (issues créées / semaine a dépassé le standard deviation normal)
     print(f" Projet : {REPO}")
     print(f"- Total issues : {total}")
     print(f"- Ouvertes     : {open_issues}")

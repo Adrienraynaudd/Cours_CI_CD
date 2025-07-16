@@ -10,6 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Ben non, c'est pas des property-based-tests, c'est des tests unitaires
   property-based-test:
     name: property-based-test
     runs-on: ubuntu-latest
@@ -45,4 +46,4 @@ jobs:
           toolchain: stable
 
       - name: run test
-        run: cargo test --features testing
+        run: cargo test --features testing  # La feature testing ne sert pas à ça, dans notre cas on ne doit pas l'utiliser

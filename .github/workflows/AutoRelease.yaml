@@ -65,7 +65,7 @@ jobs:
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           VERSION="${BRANCH_NAME//release\//v}"
-          MAN=$(grep ./doc/simeis_man || true)
+          MAN=$(grep ./doc/simeis_man || true)  # Ou alors $(cat ./doc/simeis_man), beaucoup plus clean
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "MAN=$MAN" >> $GITHUB_ENV
 
@@ -82,17 +82,18 @@ jobs:
           cat <<EOF > $PKGDIR/DEBIAN/control
           Package: simeis-server-${{ env.VERSION }}
           Version: ${{ env.VERSION }}
-          Section: utils
+          Section: utils  # Game plutôt
           Priority: optional
           Architecture: amd64
-          Depends: libc6 (>= 2.36), systemd
+          Depends: libc6 (>= 2.36), systemd  # Dépends en cmatrix aussi, voir le sujet
           Maintainer: Ton Nom <ton@email.com>
           Description: Serveur Rust Simeis
           EOF
 
-              echo "${{ env.MAN }}" > $PKGDIR/etc/man/manual
+          # Pourquoi pas cp ./doc/simeis_man $PKGDIR/etc/man/manual ? Over-engineered
+          echo "${{ env.MAN }}" > $PKGDIR/etc/man/manual
 
-              cat <<'EOF' > $PKGDIR/DEBIAN/postinst
+          cat <<'EOF' > $PKGDIR/DEBIAN/postinst
           #!/bin/bash
           set -e
 
@@ -118,9 +119,10 @@ jobs:
 
           exit 0
           EOF
-              chmod 0755 $PKGDIR/DEBIAN/postinst
 
-              cat <<EOF > $PKGDIR/etc/systemd/system/simeis_AMP.service
+          chmod 0755 $PKGDIR/DEBIAN/postinst
+
+          cat <<EOF > $PKGDIR/etc/systemd/system/simeis_AMP.service
           [Unit]
           Description=Simeis Rust API Server
           After=network.target
