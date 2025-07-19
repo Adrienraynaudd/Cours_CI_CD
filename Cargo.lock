@@ -78,9 +78,9 @@ dependencies = [
 
 [[package]]
 name = "async-channel"
-version = "2.3.1"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89b47800b0be77592da0afd425cc03468052844aff33b84e33cc696f64e77b6a"
+checksum = "924ed96dd52d1b75e9c1a3e6275715fd320f5f9439fb5a4a11fa51f4221158d2"
 dependencies = [
  "concurrent-queue",
  "event-listener-strategy",
@@ -197,9 +197,9 @@ dependencies = [
 
 [[package]]
 name = "crc32fast"
-version = "1.4.2"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a97769d94ddab943e4510d138150169a2758b5ef3eb191a9ee688de3e23ef7b3"
+checksum = "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
 dependencies = [
  "cfg-if",
 ]
@@ -413,6 +413,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
 
 [[package]]
+name = "io-uring"
+version = "0.7.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b86e202f00093dcba4275d4636b93ef9dd75d025ae560d2521b45ea28ab49013"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "libc",
+]
+
+[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -524,9 +535,9 @@ dependencies = [
 
 [[package]]
 name = "ntex"
-version = "2.14.0"
+version = "2.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd66840d8ec0d04588a3f87c4efeb7eeb19ada88ed683f70565f09e3a8bf294c"
+checksum = "73b4c2ed57153961bc0de13fb0be0620e051ab0887d4679bd1fe210ce63a4bd2"
 dependencies = [
  "base64",
  "bitflags",
@@ -557,16 +568,16 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
- "sha-1",
+ "sha1",
  "thiserror",
  "variadics_please",
 ]
 
 [[package]]
 name = "ntex-bytes"
-version = "0.1.29"
+version = "0.1.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5ef725ad53b3f1bee53048ab7ad0edfaaf0793937fe4abd8d4c674999e539b9"
+checksum = "53d23b86ef2f4a947e29e959a61bdae71c9d52a80df02936a9992bc6dbda9ddb"
 dependencies = [
  "bitflags",
  "bytes",
@@ -585,9 +596,9 @@ dependencies = [
 
 [[package]]
 name = "ntex-h2"
-version = "1.9.0"
+version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "110ae038ba29c142b4cc7a969841a6ba33efbb353db540460d57bbd09353c41c"
+checksum = "41420ae3324234a8fbb3007dc924097400aca20de5bc90644ec6771b4c308a60"
 dependencies = [
  "bitflags",
  "fxhash",
@@ -606,9 +617,9 @@ dependencies = [
 
 [[package]]
 name = "ntex-http"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa914d2065138de8d3439a6221259fa810c04ded06ddbcc7e46accc52f6365de"
+checksum = "3102673534f57dbc7fc9e7f1aac4126f353366c67518eac0a7763bb2515f0a7a"
 dependencies = [
  "futures-core",
  "fxhash",
@@ -617,6 +628,7 @@ dependencies = [
  "log",
  "ntex-bytes",
  "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -647,9 +659,9 @@ dependencies = [
 
 [[package]]
 name = "ntex-net"
-version = "2.6.0"
+version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c374a8552bc8a72c541ebb81852e71aec7f3c31f9d6be2f0fcf9a539a5ce6890"
+checksum = "ef3d6829da93773089c38939803dd5cc348d0743b60b1b079e5529e3ee88d1fe"
 dependencies = [
  "bitflags",
  "cfg-if",
@@ -725,9 +737,9 @@ dependencies = [
 
 [[package]]
 name = "ntex-tls"
-version = "2.4.1"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d37bf010346f6f659d375e1366ad83ea8f4a22ac2c6216383de0e46fcf1cd7d"
+checksum = "13141967149a22b93dfaf050a87e3ec801dacc30cbb180b0000ddb6969d40d58"
 dependencies = [
  "log",
  "ntex-bytes",
@@ -753,9 +765,9 @@ dependencies = [
 
 [[package]]
 name = "ntex-util"
-version = "2.12.0"
+version = "2.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bbd67b8b56fcce6c2df5fbdc2d6416d56328b1482ea64199bcc0444c4f24c0f"
+checksum = "546d60d666f713b18357d233aa9da7e38a30c934f0dbfe97526c7e475cd0f12e"
 dependencies = [
  "bitflags",
  "futures-core",
@@ -968,15 +980,15 @@ checksum = "989e6739f80c4ad5b13e0fd7fe89531180375b18520cc8c82080e4dc4035b84f"
 
 [[package]]
 name = "rustix"
-version = "1.0.7"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c71e83d6afe7ff64890ec6b71d6a69bb8a610ab78ce364b3352876bb4c801266"
+checksum = "11181fbabf243db407ef8df94a6ce0b2f9a733bd8be4ad02b4eda9602296cac8"
 dependencies = [
  "bitflags",
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.59.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -1013,9 +1025,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.140"
+version = "1.0.141"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "20068b6e96dc6c9bd23e01df8827e6c7e1f2fddd43c21810382803c136b99373"
+checksum = "30b9eff21ebe718216c6ec64e1d9ac57087aad11efc64e32002bce4a0d4c03d3"
 dependencies = [
  "itoa",
  "memchr",
@@ -1036,10 +1048,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "sha-1"
-version = "0.10.1"
+name = "sha1"
+version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5058ada175748e33390e40e872bd0fe59a19f265d0158daa551c5a88a76009c"
+checksum = "e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba"
 dependencies = [
  "cfg-if",
  "cpufeatures",
@@ -1179,15 +1191,17 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.45.1"
+version = "1.46.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75ef51a33ef1da925cea3e4eb122833cb377c61439ca401b770f54902b806779"
+checksum = "0cc3a2344dafbe23a245241fe8b09735b521110d30fcefbbd5feb1797ca35d17"
 dependencies = [
  "backtrace",
+ "io-uring",
  "libc",
  "mio",
  "pin-project-lite",
  "signal-hook-registry",
+ "slab",
  "socket2",
  "windows-sys 0.52.0",
 ]
